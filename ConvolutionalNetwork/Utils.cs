@@ -16,14 +16,11 @@ namespace ConvolutionalNetwork
             
             double convolution = 0;
 
-            for (int i = 0; i < matrix.Width; i++)
+            for (int i = 0; i < matrix.Height; i++)
             {
-                for (int j = 0; j < matrix.Height; j++)
+                for (int j = 0; j < matrix.Width; j++)
                 {
-                    for (int k = 0; k < matrix.Depth; k++)
-                    {
-                        convolution += matrix[k, i, j] * kernel[k, i, j];
-                    }
+                    convolution += matrix[i, j] * kernel[i, j];
                 }
             }
 
@@ -32,111 +29,102 @@ namespace ConvolutionalNetwork
 
         public static double Convolve(Matrix matrix, Matrix kernel, int yoffset, int xoffset)
         {
-            if (matrix.Depth != kernel.Depth) throw new InvalidOperationException("Can't convolve matrices of different depths");
-
             double convolution = 0;
 
-            for (int k = 0; k < kernel.Depth; k++)
-            {
-                for (int i = 0; i < kernel.Width; i++)
+                for (int i = 0; i < kernel.Height; i++)
                 {
-                    for (int j = 0; j < kernel.Height; j++)
+                    for (int j = 0; j < kernel.Width; j++)
                     {
-                        convolution += matrix[k, j + yoffset, i + xoffset] * kernel[k, j, i];
+                        convolution += matrix[i + yoffset, j + xoffset] * kernel[i, j];
                     }
                 }
-            }
             return convolution;
         }
     
-        public static Matrix MaxPool(Matrix m, int stride)
+        public static Matrix MaxPool(Matrix matrix, int stride)
         {
-            if (m.Width % stride != 0 || m.Height % stride != 0)
+            if (matrix.Width % stride != 0 || matrix.Height % stride != 0)
                 throw new InvalidOperationException(
                     $"Can't Pool matrix if dimensions aren't divisable by the stride;" +
-                    $"\nWidth={m.Height} Height={m.Width} Stride={stride}"
+                    $"\nWidth={matrix.Height} Height={matrix.Width} Stride={stride}"
                     );
 
-            int polledWidth = m.Width / stride;
-            int polledHeight = m.Height / stride;
+            int polledWidth = matrix.Width / stride;
+            int polledHeight = matrix.Height / stride;
 
 
-            Matrix polledMatrix = new Matrix(polledWidth, polledHeight, m.Depth);
+            Matrix polledMatrix = new Matrix(polledHeight, polledWidth);
 
-            
-
-            for (int k = 0; k < m.Depth; k++)
-            {
                 for (int l = 0; l < polledHeight; l++)
                 {
-                    for (int n = 0; n < polledWidth; n++)
+                    for (int m = 0; m < polledWidth; m++)
                     {
                         var compared = new List<double>();
                         int imax = l * stride + stride;
 
                         for (int i = l * stride; i < imax; i++)
                         {
-                            int jmax = n * stride + stride;
+                            int jmax = m * stride + stride;
                             
-                            for (int j = n * stride; j < jmax; j++)
+                            for (int j = m * stride; j < jmax; j++)
                             {
                                 //Console.WriteLine(i + " " + j + " -> " + m[k, i, j]);
-                                compared.Add(m[k, i, j]);
+                                compared.Add(matrix[i, j]);
                             }
                         }
-                        polledMatrix[k, l, n] = compared.Max();
+                        polledMatrix[l, m] = compared.Max();
                     }                    
                 }
-            }
             return polledMatrix;
         }
     
         public static Matrix ConvolveWhole(Matrix matrix, Matrix kernel)
         {
-            if (matrix.Depth!= kernel.Depth) throw new InvalidOperationException("Can't convolve matrices of different depths");
 
-            int outputWidth = matrix.Width - kernel.Width + 1;
-            int outputHeight = matrix.Height - kernel.Height + 1;
+            var output = new Matrix(matrix.Height - kernel.Height + 1, matrix.Width - kernel.Width + 1);
 
-            var output = new Matrix(outputWidth,outputHeight,1);
-
-            for (int i = 0; i < outputHeight; i++)
+            for (int i = 0; i < output.Height; i++)
             {
-                for (int j = 0; j < outputWidth; j++)
+                for (int j = 0; j < output.Width; j++)
                 {
-                    output[0, i, j] = Convolve(matrix, kernel, i, j);
+                    output[i, j] = Convolve(matrix, kernel, i, j);
                 }
             }
 
             return output;
         }
 
-        public static Matrix AsMatrix(this Bitmap bitmap, bool rgb = true)
+        public static Matrix[] AsMatrixRGB(this Bitmap bitmap)
         {
-            Matrix output;
+            var output = new Matrix[3];
 
-            if (rgb)
+            for (int i = 0; i < 3; i++)
             {
-                output = new Matrix(bitmap.Width, bitmap.Height, 3);
-                for (int i = 0; i < bitmap.Height; i++)
-                    for (int j = 0; j < bitmap.Width; j++)
-                        output[0, i, j] = bitmap.GetPixel(j, i).R;
-
-                for (int i = 0; i < bitmap.Height; i++)
-                    for (int j = 0; j < bitmap.Width; j++)
-                        output[1, i, j] = bitmap.GetPixel(j, i).G;
-
-                for (int i = 0; i < bitmap.Height; i++)
-                    for (int j = 0; j < bitmap.Width; j++)
-                        output[2, i, j] = bitmap.GetPixel(j, i).B;
+                output[i] = new Matrix(bitmap.Height, bitmap.Width);
             }
-            else
-            {
-                output = new Matrix(bitmap.Width, bitmap.Height, 3);
-                for (int i = 0; i < bitmap.Height; i++)
-                    for (int j = 0; j < bitmap.Width; j++)
-                        output[0, i, j] = bitmap.GetPixel(j, i).GetSaturation();
-            }
+
+            for (int i = 0; i < bitmap.Height; i++)
+                for (int j = 0; j < bitmap.Width; j++)
+                    output[0][i, j] = bitmap.GetPixel(j, i).R;
+
+            for (int i = 0; i < bitmap.Height; i++)
+                for (int j = 0; j < bitmap.Width; j++)
+                    output[1][i, j] = bitmap.GetPixel(j, i).G;
+
+            for (int i = 0; i < bitmap.Height; i++)
+                for (int j = 0; j < bitmap.Width; j++)
+                    output[2][i, j] = bitmap.GetPixel(j, i).B;
+
+            return output;
+        }
+
+        public static Matrix AsMatrixGrayScale(this Bitmap bitmap)
+        {
+            var output = new Matrix(bitmap.Height, bitmap.Width);
+
+            for (int i = 0; i < bitmap.Height; i++)
+                for (int j = 0; j < bitmap.Width; j++)
+                    output[i,j] = bitmap.GetPixel(j, i).GetSaturation();
 
             return output;
         }

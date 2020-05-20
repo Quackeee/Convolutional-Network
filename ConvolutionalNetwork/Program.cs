@@ -13,16 +13,14 @@ namespace ConvolutionalNetwork
         {
             Matrix matrix = new Matrix
             (
-                new double[,,]
+                new double[,]
                 {
-                    {
                         {1,6,0,3,9,3},
                         {2,7,1,-1,2,8},
                         {3,2,8,6,2,4 },
                         {2,1,1,7,5,3 },
                         {5,4,-4,7,6,3 },
                         {7,6,5,9,1,0 }
-                    }
                 }
             );
 
@@ -31,24 +29,20 @@ namespace ConvolutionalNetwork
 
             Matrix matrix2 = new Matrix
             (
-                new double[,,]
+                new double[,]
                 {
-                    {
-                        {0,0,0},
-                        {0,1,1},    
-                        {0,1,0},
-                    }
+                    {0,0,0},
+                    {0,1,1},    
+                    {0,1,0}
                 }
             );
             Matrix kernel = new Matrix
             (
-                new double[,,]
+                new double[,]
                 {
-                    {
                         {-1,0,1},
                         {-2,0,2},
-                        {-1,0,1},
-                    }
+                        {-1,0,1}
                 }
             );
 
@@ -58,9 +52,8 @@ namespace ConvolutionalNetwork
 
             Matrix matrix3 = new Matrix
             (
-                new double[,,]
+                new double[,]
                 {
-                    {
                         {0,0,0,0,0,0,0,0},
                         {0,1,1,1,1,1,1,0},
                         {0,1,0,0,0,0,0,0},
@@ -69,7 +62,6 @@ namespace ConvolutionalNetwork
                         {0,1,0,0,0,0,1,0},
                         {0,0,1,1,1,1,0,0},
                         {0,0,0,0,0,0,0,0}
-                    }
                 }
             );
 
