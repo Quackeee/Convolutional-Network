@@ -9,6 +9,20 @@ namespace ConvolutionalNetwork
 {
     static class Utils
     {
+
+        private static Random _rand;
+        public static Random Rand
+        {
+            get
+            {
+                if (_rand == null)
+                {
+                    _rand = new Random();
+                }
+                return _rand;
+            }
+        }
+
         public static double Convolve(Matrix matrix, Matrix kernel)
         {
             //if (m1.Dimensions != m2.Dimensions)
@@ -81,44 +95,53 @@ namespace ConvolutionalNetwork
         public static Matrix ConvolveWhole(Matrix matrix, Matrix kernel)
         {
 
-            var output = new Matrix(matrix.Height - kernel.Height + 1, matrix.Width - kernel.Width + 1);
+            var convolution = new Matrix(matrix.Height - kernel.Height + 1, matrix.Width - kernel.Width + 1);
 
-            for (int i = 0; i < output.Height; i++)
+            for (int i = 0; i < convolution.Height; i++)
             {
-                for (int j = 0; j < output.Width; j++)
+                for (int j = 0; j < convolution.Width; j++)
                 {
-                    output[i, j] = Convolve(matrix, kernel, i, j);
+                    convolution[i, j] = Convolve(matrix, kernel, i, j);
                 }
             }
 
-            return output;
+            return convolution;
         }
 
-        public static Matrix[] AsMatrixRGB(this Bitmap bitmap)
+        public static Matrix ConvolveWhole(Matrix3D matrix, Matrix3D kernel)
         {
-            var output = new Matrix[3];
+            var convolution = new Matrix(matrix[0].Height - kernel[0].Height + 1, matrix[0].Width - kernel[0].Width + 1);
 
-            for (int i = 0; i < 3; i++)
+            for (int k = 0; k < matrix.Depth; k++)
             {
-                output[i] = new Matrix(bitmap.Height, bitmap.Width);
+                convolution += ConvolveWhole(matrix[k], kernel[k]);
             }
 
-            for (int i = 0; i < bitmap.Height; i++)
-                for (int j = 0; j < bitmap.Width; j++)
-                    output[0][i, j] = bitmap.GetPixel(j, i).R;
-
-            for (int i = 0; i < bitmap.Height; i++)
-                for (int j = 0; j < bitmap.Width; j++)
-                    output[1][i, j] = bitmap.GetPixel(j, i).G;
-
-            for (int i = 0; i < bitmap.Height; i++)
-                for (int j = 0; j < bitmap.Width; j++)
-                    output[2][i, j] = bitmap.GetPixel(j, i).B;
-
-            return output;
+            return convolution;
         }
 
-        public static Matrix AsMatrixGrayScale(this Bitmap bitmap)
+        public static Matrix3D AsMatrixRGB(this Bitmap bitmap)
+        {
+            var rMatrix = new Matrix(bitmap.Height, bitmap.Width);
+            var gMatrix = new Matrix(bitmap.Height, bitmap.Width);
+            var bMatrix = new Matrix(bitmap.Height, bitmap.Width);
+
+            for (int i = 0; i < bitmap.Height; i++)
+                for (int j = 0; j < bitmap.Width; j++)
+                    rMatrix[i, j] = bitmap.GetPixel(j, i).R;
+
+            for (int i = 0; i < bitmap.Height; i++)
+                for (int j = 0; j < bitmap.Width; j++)
+                    gMatrix[i, j] = bitmap.GetPixel(j, i).G;
+
+            for (int i = 0; i < bitmap.Height; i++)
+                for (int j = 0; j < bitmap.Width; j++)
+                    bMatrix[i, j] = bitmap.GetPixel(j, i).B;
+
+            return new Matrix3D(rMatrix, bMatrix, bMatrix);
+        }
+
+        public static Matrix AsMatrixGrayscale(this Bitmap bitmap)
         {
             var output = new Matrix(bitmap.Height, bitmap.Width);
 
