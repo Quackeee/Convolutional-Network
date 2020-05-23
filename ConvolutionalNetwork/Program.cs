@@ -77,7 +77,9 @@ namespace ConvolutionalNetwork
                 new MaxPoolLayer(2),
                 new ConvLayer(16),
                 new MaxPoolLayer(2),
-                new ConvLayer(120)
+                new ConvLayer(120),
+                new FullConLayer(84),
+                new FullConLayer(10)
             );
 
 
@@ -87,6 +89,7 @@ namespace ConvolutionalNetwork
             var networkOutput = network.Output;
 
             Console.WriteLine($"{networkOutput.Depth} {networkOutput.Height} {networkOutput.Width}");
+            Console.WriteLine(networkOutput);
 
             Console.ReadKey();
         }

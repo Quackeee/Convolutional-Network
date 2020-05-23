@@ -35,7 +35,10 @@ namespace ConvolutionalNetwork
         public ConvLayer(int outputCount, int kernelSize = 5)
         {
             OutputDepth = outputCount;
+
+            _kernelSize = kernelSize;
             _neurons = new ConvNeuron[outputCount];
+            
 
             for (int i = 0; i < outputCount; i++)
             {
@@ -120,6 +123,43 @@ namespace ConvolutionalNetwork
 
             if (rgb) OutputDepth = 3;
             else OutputDepth = 1;
+        }
+    }
+
+    public class FullConLayer : HiddenLayer
+    {
+        Neuron[] _neurons;
+        
+
+        public FullConLayer(int outputCount)
+        {
+            OutputDepth = 1;
+            OutputHeight = outputCount;
+            OutputWidth = 1;
+
+            _neurons = new Neuron[outputCount];
+            _output = new Matrix3D(1, outputCount, 1);
+
+            for (int i = 0; i < outputCount; i++)
+            {
+                _neurons[i] = new Neuron();
+            }
+        }
+
+        public override void CalculateOutput()
+        {
+            for (int i = 0; i < OutputHeight; i++)
+            {
+                _neurons[i].CalculateOutput();
+                _output[0, i, 0] = _neurons[i].Output;
+            }
+        }
+
+        public override void ConnectToInput(NetworkLayer inputLayer)
+        {
+            _inputLayer = inputLayer;
+            foreach (var neuron in _neurons)
+                neuron.ConnectToInput(_inputLayer);
         }
     }
 }

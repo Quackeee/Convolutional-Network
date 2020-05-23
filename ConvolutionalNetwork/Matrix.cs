@@ -80,7 +80,6 @@ namespace ConvolutionalNetwork
             return sum;
         }
 
-
         public override string ToString()
         {
             string s = string.Empty;
@@ -95,6 +94,7 @@ namespace ConvolutionalNetwork
             }
             return s;
         }
+    
     }
 
     public class Matrix3D
