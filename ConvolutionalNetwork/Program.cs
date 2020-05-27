@@ -78,8 +78,8 @@ namespace ConvolutionalNetwork
                 new ConvLayer(16),
                 new MaxPoolLayer(2),
                 new ConvLayer(120),
-                new FullConLayer(84),
-                new FullConLayer(10)
+                new FullConLayer(84, ActivationFuncs.ReLU),
+                new FullConLayer(10, ActivationFuncs.SoftMax)
             );
 
 

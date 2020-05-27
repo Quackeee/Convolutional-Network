@@ -154,6 +154,14 @@ namespace ConvolutionalNetwork
                         this[k, i, j] = (Rand.NextDouble() - 0.5) * 2 * (max - min) + min;
         }
 
+        public void Apply(Func<double,double> func)
+        {
+            for (int k = 0; k < Depth; k++)
+                for (int i = 0; i < Height; i++)
+                    for (int j = 0; j < Width; j++)
+                        this[k, i, j] = func(this[k, i, j]);
+        }
+
         public static Matrix3D operator +(Matrix3D m1, Matrix3D m2)
         {
             if (m1 == null) return m2;

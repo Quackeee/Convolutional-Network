@@ -47,8 +47,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActivationFunc.cs" />
     <Compile Include="Matrix.cs" />
-    <Compile Include="Network\Layer.cs" />
+    <Compile Include="Network\Layer\ConvLayer.cs" />
+    <Compile Include="Network\Layer\FullConLayer.cs" />
+    <Compile Include="Network\Layer\Base\LayerBase.cs" />
+    <Compile Include="Network\Layer\InputLayer.cs" />
+    <Compile Include="Network\Layer\MaxPoolLayer.cs" />
     <Compile Include="Network\Network.cs" />
     <Compile Include="Network\Neuron.cs" />
     <Compile Include="Network\Synapse.cs" />

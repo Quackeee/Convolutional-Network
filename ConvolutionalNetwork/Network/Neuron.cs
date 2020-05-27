@@ -53,7 +53,7 @@ namespace ConvolutionalNetwork
 
     class Neuron : INeuron
     {
-        Synapse[] _inputSynapses;
+        public Synapse[] Weights { get; private set; }
         double _inputSum;
 
         private Func<double, double> _activation = (arg) => arg;
@@ -67,7 +67,7 @@ namespace ConvolutionalNetwork
             {
                 double output = 0;
 
-                foreach (Synapse synapse in _inputSynapses)
+                foreach (Synapse synapse in Weights)
                 {
                     output += synapse.Output;
                 }
@@ -80,7 +80,7 @@ namespace ConvolutionalNetwork
 
         public void ConnectToInput(NetworkLayer inputLayer)
         {
-            _inputSynapses = new Synapse[inputLayer.OutputDepth * inputLayer.OutputHeight * inputLayer.OutputWidth];
+            Weights = new Synapse[inputLayer.OutputDepth * inputLayer.OutputHeight * inputLayer.OutputWidth];
 
             int n = 0;
 
@@ -88,7 +88,7 @@ namespace ConvolutionalNetwork
                 for (int i = 0; i < inputLayer.OutputHeight; i++)
                     for (int j = 0; j < inputLayer.OutputWidth; j++)
                     {
-                        _inputSynapses[n] = new Synapse(inputLayer, k, i, j);
+                        Weights[n] = new Synapse(inputLayer, k, i, j);
                         n++;
                     }
 
