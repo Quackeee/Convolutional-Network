@@ -19,7 +19,34 @@ namespace ConvolutionalNetwork
         public override void CalculateDeltas(Matrix3D previousDeltas)
         {
             Console.WriteLine("Calculating deltas in MaxPoolLayer");
-            throw new NotImplementedException();
+
+            var deltas = new Matrix3D(_input.Dimensions);
+            deltas.ZeroInit();
+            for (int k = 0; k < OutputDepth; k++)
+            {
+                for (int i = 0; i < OutputHeight; i++)
+                {
+                    var i2max = i * _stride + _stride;
+                    for (int j = 0; j < OutputHeight; j++)
+                    {
+                        var j2max = j * _stride + _stride;
+
+                        for (int i2 = i * _stride; i2 < i2max; i2++)
+                            for (int j2 = j * _stride; j2 < j2max; j2++)
+                                if (Output[k, i, j] == _input[k, i2, j2])
+                                {
+                                    deltas[k, i2, j2] = previousDeltas[k, i, j];
+                                    i2 = i2max;
+                                    j2 = j2max;
+                                }
+                    }
+                }
+            }
+            Console.WriteLine(deltas);
+
+            if (_inputLayer is HiddenLayer)
+                (_inputLayer as HiddenLayer).CalculateDeltas(deltas);
+
         }
 
         public override void CalculateOutput()
@@ -37,7 +64,6 @@ namespace ConvolutionalNetwork
         public override void ConnectToInput(NetworkLayer inputLayer)
         {
             _inputLayer = inputLayer;
-            _inputLayer.ConnectOutput(this);
 
             OutputDepth = _inputLayer.OutputDepth;
             OutputHeight = _inputLayer.OutputHeight / _stride;

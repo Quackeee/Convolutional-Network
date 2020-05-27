@@ -33,8 +33,6 @@ namespace ConvolutionalNetwork
         public override void ConnectToInput(NetworkLayer inputLayer)
         {
             _inputLayer = inputLayer;
-            _inputLayer.ConnectOutput(this);
-
 
             OutputHeight = _inputLayer.OutputHeight - _kernelSize + 1;
             OutputWidth = _inputLayer.OutputWidth - _kernelSize + 1;

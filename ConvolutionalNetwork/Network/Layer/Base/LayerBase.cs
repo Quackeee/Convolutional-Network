@@ -13,16 +13,9 @@ namespace ConvolutionalNetwork
         protected Matrix3D _output;
         public Matrix3D Output { get => _output; }
 
-        public NetworkLayer OutputLayer { get; protected set; }
-
         public int OutputDepth { get; protected set; }
         public int OutputHeight { get; protected set; }
         public int OutputWidth { get; protected set; }
-
-        public void ConnectOutput(NetworkLayer output)
-        {
-            OutputLayer = output;
-        }
     }
     public abstract class HiddenLayer : NetworkLayer
     {

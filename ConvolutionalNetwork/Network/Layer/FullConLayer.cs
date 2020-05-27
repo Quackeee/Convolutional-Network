@@ -72,7 +72,6 @@ namespace ConvolutionalNetwork
         public override void ConnectToInput(NetworkLayer inputLayer)
         {
             _inputLayer = inputLayer;
-            _inputLayer.ConnectOutput(this);
 
             foreach (var neuron in _neurons)
                 neuron.ConnectToInput(_inputLayer);

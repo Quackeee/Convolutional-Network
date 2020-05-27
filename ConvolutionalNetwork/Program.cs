@@ -77,7 +77,7 @@ namespace ConvolutionalNetwork
                 new MaxPoolLayer(2),
                 new ConvLayer(16),
                 new MaxPoolLayer(2),
-                new ConvLayer(120),
+                //new ConvLayer(120),
                 new FullConLayer(84, ActivationFuncs.Sigmoid),
                 new FullConLayer(10, ActivationFuncs.SoftMax)
             ) ;
