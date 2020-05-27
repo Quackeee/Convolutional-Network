@@ -40,7 +40,5 @@ namespace ConvolutionalNetwork
         public abstract void CalculateOutput();
         public abstract void ConnectToInput(NetworkLayer inputLayer);
         public abstract void CalculateDeltas(Matrix3D previousDeltas);
-
-        public abstract double GetWeightBetween(int k1, int i1, int j1, int k2, int i2, int j2);
     }
 }

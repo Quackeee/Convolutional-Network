@@ -35,5 +35,19 @@ namespace ConvolutionalNetwork
                 layer.CalculateOutput();
         }
 
+        public void BackPropagate(Matrix3D expectedOutput)
+        {
+            var deltas = new Matrix3D(expectedOutput.Dimensions);
+
+            for (int k = 0; k < Output.Depth; k++)
+                for (int i = 0; i < Output.Height; i++)
+                    for (int j = 0; j < Output.Width; j++)
+                        deltas[k, i, j] = -expectedOutput[k, i, j] / Output[k, i, j];
+
+            Console.WriteLine(deltas);
+
+            _layers.Last().CalculateDeltas(deltas);
+        }
+
     }
 }

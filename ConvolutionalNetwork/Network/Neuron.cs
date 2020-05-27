@@ -53,8 +53,9 @@ namespace ConvolutionalNetwork
 
     class Neuron : INeuron
     {
-        public Synapse[] Weights { get; private set; }
+        public Matrix3D Weights { get; private set; }
         double _inputSum;
+        private NetworkLayer _inputLayer;
 
         private Func<double, double> _activation = (arg) => arg;
 
@@ -67,30 +68,25 @@ namespace ConvolutionalNetwork
             {
                 double output = 0;
 
-                foreach (Synapse synapse in Weights)
-                {
-                    output += synapse.Output;
-                }
+                for (int k = 0; k < Weights.Depth; k++)
+                    for (int i = 0; i < Weights.Height; i++)
+                        for (int j = 0; j < Weights.Width; j++)
+                            output += _inputLayer.Output[k, i, j] * Weights[k, i, j];
 
                 _inputSum = output;
                 Output = _activation(output);
             }
             else throw new InvalidOperationException("The Neuron was not connected");
-        }
+        } 
 
         public void ConnectToInput(NetworkLayer inputLayer)
         {
-            Weights = new Synapse[inputLayer.OutputDepth * inputLayer.OutputHeight * inputLayer.OutputWidth];
+            _inputLayer = inputLayer;
 
-            int n = 0;
 
-            for (int k = 0; k < inputLayer.OutputDepth; k++)
-                for (int i = 0; i < inputLayer.OutputHeight; i++)
-                    for (int j = 0; j < inputLayer.OutputWidth; j++)
-                    {
-                        Weights[n] = new Synapse(inputLayer, k, i, j);
-                        n++;
-                    }
+            //Console.WriteLine($"{inputLayer.OutputDepth} + {inputLayer.OutputHeight} + {inputLayer.OutputWidth}" );
+            Weights = new Matrix3D(inputLayer.OutputDepth, inputLayer.OutputHeight, inputLayer.OutputWidth);
+            Weights.RandomInit();
 
             IsConnected = true;
         }

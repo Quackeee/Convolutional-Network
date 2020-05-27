@@ -128,15 +128,15 @@ namespace ConvolutionalNetwork
 
             for (int i = 0; i < bitmap.Height; i++)
                 for (int j = 0; j < bitmap.Width; j++)
-                    rMatrix[i, j] = bitmap.GetPixel(j, i).R;
+                    rMatrix[i, j] = bitmap.GetPixel(j, i).R/255;
 
             for (int i = 0; i < bitmap.Height; i++)
                 for (int j = 0; j < bitmap.Width; j++)
-                    gMatrix[i, j] = bitmap.GetPixel(j, i).G;
+                    gMatrix[i, j] = bitmap.GetPixel(j, i).G/255;
 
             for (int i = 0; i < bitmap.Height; i++)
                 for (int j = 0; j < bitmap.Width; j++)
-                    bMatrix[i, j] = bitmap.GetPixel(j, i).B;
+                    bMatrix[i, j] = bitmap.GetPixel(j, i).B/255;
 
             return new Matrix3D(rMatrix, bMatrix, bMatrix);
         }

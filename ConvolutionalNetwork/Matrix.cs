@@ -100,6 +100,7 @@ namespace ConvolutionalNetwork
     public class Matrix3D
     {
         private Matrix[] _matrices;
+        public Tuple<int, int, int> Dimensions { get; private set; }
 
         public int Width { get; private set; }
         public int Height { get; private set; }
@@ -120,13 +121,14 @@ namespace ConvolutionalNetwork
             Depth = depth;
             Height = height;
             Width = width;
+            Dimensions = new Tuple<int, int, int>(depth, height, width);
 
             _matrices = new Matrix[Depth];
             for (int i = 0; i < depth; i++)
             {
                 _matrices[i] = new Matrix(height, width);
             }
-
+            Dimensions = new Tuple<int, int, int>(Depth, Height, Width);
         }
         public Matrix3D(params Matrix[] matrices)
         {
@@ -137,6 +139,11 @@ namespace ConvolutionalNetwork
             Depth = matrices.Length;
             Width = matrices[0].Width;
             Height = matrices[0].Height;
+            Dimensions = new Tuple<int, int, int>(Depth, Height, Width);
+        }
+        public Matrix3D(Tuple<int, int, int> dimensions) : this(dimensions.Item1, dimensions.Item2, dimensions.Item3)
+        {
+
         }
 
         public void RandomInit(double range = 1)
@@ -153,7 +160,6 @@ namespace ConvolutionalNetwork
                     for (int j = 0; j < Width; j++)
                         this[k, i, j] = (Rand.NextDouble() - 0.5) * 2 * (max - min) + min;
         }
-
         public void Apply(Func<double,double> func)
         {
             for (int k = 0; k < Depth; k++)

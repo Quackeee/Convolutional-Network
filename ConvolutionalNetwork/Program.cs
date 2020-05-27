@@ -78,9 +78,9 @@ namespace ConvolutionalNetwork
                 new ConvLayer(16),
                 new MaxPoolLayer(2),
                 new ConvLayer(120),
-                new FullConLayer(84, ActivationFuncs.ReLU),
+                new FullConLayer(84, ActivationFuncs.Sigmoid),
                 new FullConLayer(10, ActivationFuncs.SoftMax)
-            );
+            ) ;
 
 
 
@@ -88,10 +88,32 @@ namespace ConvolutionalNetwork
 
             var networkOutput = network.Output;
 
+            var expected = new Matrix3D(new Matrix(
+                new double[,]
+                  {
+                          {0},
+                          {0},
+                          {0},
+                          {1},
+                          {0},
+                          {0},
+                          {0},
+                          {0},
+                          {0},
+                          {0}
+                  }
+                ));
+
+
             Console.WriteLine($"{networkOutput.Depth} {networkOutput.Height} {networkOutput.Width}");
             Console.WriteLine(networkOutput);
 
+            network.BackPropagate(expected);
+
             Console.ReadKey();
+
+
+
         }
     }
 }

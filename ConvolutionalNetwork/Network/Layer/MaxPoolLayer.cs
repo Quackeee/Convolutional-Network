@@ -18,7 +18,8 @@ namespace ConvolutionalNetwork
 
         public override void CalculateDeltas(Matrix3D previousDeltas)
         {
-
+            Console.WriteLine("Calculating deltas in MaxPoolLayer");
+            throw new NotImplementedException();
         }
 
         public override void CalculateOutput()
@@ -41,12 +42,6 @@ namespace ConvolutionalNetwork
             OutputDepth = _inputLayer.OutputDepth;
             OutputHeight = _inputLayer.OutputHeight / _stride;
             OutputWidth = _inputLayer.OutputWidth / _stride;
-        }
-
-        public override double GetWeightBetween(int k1, int i1, int j1, int k2, int i2, int j2)
-        {
-            if (i2 / _stride != i1 || j2 / _stride != j2) throw new InvalidOperationException();
-            if (Output[k1, i1, j1] == _input[k2, i2, j2]) return 1; else return 0;
         }
     }
 }

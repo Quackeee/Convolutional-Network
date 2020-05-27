@@ -61,11 +61,7 @@ namespace ConvolutionalNetwork
 
         public override void CalculateDeltas(Matrix3D previousDeltas)
         {
-            throw new NotImplementedException();
-        }
-
-        public override double GetWeightBetween(int k1, int i1, int j1, int k2, int i2, int j2)
-        {
+            Console.WriteLine("Calculating deltas in ConvLayer");
             throw new NotImplementedException();
         }
     }
