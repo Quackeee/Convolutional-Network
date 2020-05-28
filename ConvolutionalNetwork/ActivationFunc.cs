@@ -26,7 +26,7 @@ namespace ConvolutionalNetwork
             for (int k = 0; k < oldDeltas.Depth; k++)
                 for (int i = 0; i < oldDeltas.Height; i++)
                     for (int j = 0; j < oldDeltas.Width; j++)
-                        newDeltas[k, i, j] = oldDeltas[k, i, j] * Derivative(outputs[k,i,j]);
+                        newDeltas[k, i, j] = oldDeltas[k, i, j] * ( outputs[k, i, j] > 0 ? 1 : 0 );
 
             return newDeltas;
         }
