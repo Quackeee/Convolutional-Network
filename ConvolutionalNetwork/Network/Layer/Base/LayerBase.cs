@@ -25,13 +25,14 @@ namespace ConvolutionalNetwork
 
         public bool IsConnected => _inputLayer != null;
         public Matrix3D Deltas { get; protected set; }
-        public int InputDepth => _input.Depth;
-        public int InputHeight => _input.Height;
-        public int InputWidth => _input.Width;
+        public int InputDepth => _inputLayer.OutputDepth;
+        public int InputHeight => _inputLayer.OutputHeight;
+        public int InputWidth => _inputLayer.OutputWidth;
 
 
         public abstract void CalculateOutput();
         public abstract void ConnectToInput(NetworkLayer inputLayer);
-        public abstract void CalculateDeltas(Matrix3D previousDeltas);
+        public abstract void LoadAndPropagateDeltas(Matrix3D previousDeltas);
+
     }
 }

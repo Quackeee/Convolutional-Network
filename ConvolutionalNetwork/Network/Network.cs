@@ -46,7 +46,7 @@ namespace ConvolutionalNetwork
 
             Console.WriteLine(deltas);
 
-            _layers.Last().CalculateDeltas(deltas);
+            _layers.Last().LoadAndPropagateDeltas(deltas);
         }
 
     }

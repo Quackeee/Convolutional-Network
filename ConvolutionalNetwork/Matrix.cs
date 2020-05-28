@@ -197,12 +197,13 @@ namespace ConvolutionalNetwork
             string s = string.Empty;
             for (int k = 0; k < Depth; k++)
             {
+                Console.WriteLine();
                 for (int i = 0; i < Height; i++)
                 {
                     s += "|";
                     for (int j = 0; j < Width; j++)
                     {
-                        s += $"{this[k, i, j]}, ";
+                        s += string.Format("{0:0.00}, ", this[k,i,j]);
                     }
                     s += "|\n";
                 }

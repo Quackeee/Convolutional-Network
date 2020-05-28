@@ -27,36 +27,35 @@ namespace ConvolutionalNetwork
             }
         }
 
-        public override void CalculateDeltas(Matrix3D previousDeltas)
+        public override void LoadAndPropagateDeltas(Matrix3D previousDeltas)
         {
             Console.WriteLine("Calculating deltas in FullConLayer");
 
-            Console.WriteLine("output:");
-            Console.WriteLine(_output);
-            previousDeltas = _activation.RecalculateDeltas(previousDeltas, _output);
-            Console.WriteLine(previousDeltas);
+            Deltas = _activation.RecalculateDeltas(previousDeltas, _output);
 
-            var deltas = new Matrix3D(InputDepth, InputHeight, InputWidth);
-
-            for (int k = 0; k < InputDepth; k++)
+            if (_inputLayer is HiddenLayer)
             {
-                for (int i = 0; i < InputHeight; i++)
+
+                var deltas = new Matrix3D(InputDepth, InputHeight, InputWidth);
+
+                for (int k = 0; k < InputDepth; k++)
                 {
-                    for (int j = 0; j < InputWidth; j++)
+                    for (int i = 0; i < InputHeight; i++)
                     {
-                        deltas[k, i, j] = 0;
-                        for (int n = 0; n < OutputHeight; n++)
+                        for (int j = 0; j < InputWidth; j++)
                         {
-                            deltas[k, i, j] += previousDeltas[0, n, 0] * _neurons[n].Weights[k, i, j];
+                            deltas[k, i, j] = 0;
+                            for (int n = 0; n < OutputHeight; n++)
+                            {
+                                deltas[k, i, j] += Deltas[0, n, 0] * _neurons[n].Weights[k, i, j];
+                            }
                         }
                     }
                 }
+
+                Console.WriteLine(deltas);
+                (_inputLayer as HiddenLayer).LoadAndPropagateDeltas(deltas);
             }
-
-            Console.WriteLine(deltas);
-
-            if (_inputLayer is HiddenLayer)
-                (_inputLayer as HiddenLayer).CalculateDeltas(deltas);
         }
 
         public override void CalculateOutput()

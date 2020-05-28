@@ -16,36 +16,40 @@ namespace ConvolutionalNetwork
             _stride = stride;
         }
 
-        public override void CalculateDeltas(Matrix3D previousDeltas)
+        public override void LoadAndPropagateDeltas(Matrix3D previousDeltas)
         {
             Console.WriteLine("Calculating deltas in MaxPoolLayer");
+            Deltas = previousDeltas;
 
-            var deltas = new Matrix3D(_input.Dimensions);
-            deltas.ZeroInit();
-            for (int k = 0; k < OutputDepth; k++)
-            {
-                for (int i = 0; i < OutputHeight; i++)
-                {
-                    var i2max = i * _stride + _stride;
-                    for (int j = 0; j < OutputHeight; j++)
-                    {
-                        var j2max = j * _stride + _stride;
-
-                        for (int i2 = i * _stride; i2 < i2max; i2++)
-                            for (int j2 = j * _stride; j2 < j2max; j2++)
-                                if (Output[k, i, j] == _input[k, i2, j2])
-                                {
-                                    deltas[k, i2, j2] = previousDeltas[k, i, j];
-                                    i2 = i2max;
-                                    j2 = j2max;
-                                }
-                    }
-                }
-            }
-            Console.WriteLine(deltas);
 
             if (_inputLayer is HiddenLayer)
-                (_inputLayer as HiddenLayer).CalculateDeltas(deltas);
+            {
+                var deltas = new Matrix3D(_input.Dimensions);
+                deltas.ZeroInit();
+                for (int k = 0; k < OutputDepth; k++)
+                {
+                    for (int i = 0; i < OutputHeight; i++)
+                    {
+                        var i2max = i * _stride + _stride;
+                        for (int j = 0; j < OutputHeight; j++)
+                        {
+                            var j2max = j * _stride + _stride;
+
+                            for (int i2 = i * _stride; i2 < i2max; i2++)
+                                for (int j2 = j * _stride; j2 < j2max; j2++)
+                                    if (Output[k, i, j] == _input[k, i2, j2])
+                                    {
+                                        deltas[k, i2, j2] = Deltas[k, i, j];
+                                        i2 = i2max;
+                                        j2 = j2max;
+                                    }
+                        }
+                    }
+                }
+                Console.WriteLine(deltas);
+
+                (_inputLayer as HiddenLayer).LoadAndPropagateDeltas(deltas);
+            }
 
         }
 

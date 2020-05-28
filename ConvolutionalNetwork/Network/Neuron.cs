@@ -18,7 +18,7 @@ namespace ConvolutionalNetwork
     {
         private NetworkLayer _inputLayer;
         private Matrix _output;
-        private Matrix3D _kernel;
+        public Matrix3D Weights;
         private int _kernelSize;
 
         public bool IsConnected => _inputLayer != null;
@@ -30,7 +30,7 @@ namespace ConvolutionalNetwork
         public void CalculateOutput()
         {
             if (IsConnected)
-                _output = ConvolveWhole(_input, _kernel);
+                _output = ConvolveWhole(_input, Weights);
             else throw new InvalidOperationException("The Neuron was not connected");
         }
 
@@ -44,10 +44,10 @@ namespace ConvolutionalNetwork
             _inputLayer = inputLayer;
 
             Debug.WriteLine(inputLayer.OutputDepth);
-            Debug.WriteLine(_kernel);
+            Debug.WriteLine(Weights);
 
-            _kernel = new Matrix3D(inputLayer.OutputDepth, _kernelSize, _kernelSize);
-            _kernel.RandomInit();
+            Weights = new Matrix3D(inputLayer.OutputDepth, _kernelSize, _kernelSize);
+            Weights.RandomInit();
         }
     }
 
