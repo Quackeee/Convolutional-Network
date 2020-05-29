@@ -197,7 +197,7 @@ namespace ConvolutionalNetwork
             string s = string.Empty;
             for (int k = 0; k < Depth; k++)
             {
-                Console.WriteLine();
+                s += "\n";
                 for (int i = 0; i < Height; i++)
                 {
                     s += "|";

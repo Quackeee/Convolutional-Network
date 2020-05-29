@@ -37,7 +37,7 @@ namespace ConvolutionalNetwork
         public override Action<Matrix3D> Run => 
             (arg) =>
             {
-                Console.WriteLine(arg);
+                //Console.WriteLine(arg);
                 double sum = 0;
                 for (int k = 0; k < arg.Depth; k++)
                 {
@@ -45,13 +45,13 @@ namespace ConvolutionalNetwork
                     {
                         for (int j = 0; j < arg.Width; j++)
                         {
-                            Console.WriteLine(Exp(arg[k, i, j]/100));
+                            //Console.WriteLine(Exp(arg[k, i, j]/100));
                             sum += Exp(arg[k, i, j]/100);
                         }
                     }
                 }
-                Console.WriteLine(sum);
-                Console.WriteLine(arg[0,0,0]/sum);
+                //Console.WriteLine(sum);
+                //Console.WriteLine(arg[0,0,0]/sum);
                 arg.Apply((d) => Exp(d/100)/sum);
             };
 
@@ -69,7 +69,7 @@ namespace ConvolutionalNetwork
                         for (int k2 = 0; k2 < oldDeltas.Depth; k2++)
                             for (int i2 = 0; i2 < oldDeltas.Height; i2++)
                                 for (int j2 = 0; j2 < oldDeltas.Width; j2++)
-                                    newDeltas[k, i, j] += outputs[k, i, j] * (1 - outputs[k2, i2, j2]);
+                                    newDeltas[k, i, j] += oldDeltas[k,i,j] * outputs[k, i, j] * (1 - outputs[k2, i2, j2]);
                     }
 
             return newDeltas;

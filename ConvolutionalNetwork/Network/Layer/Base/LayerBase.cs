@@ -32,7 +32,12 @@ namespace ConvolutionalNetwork
 
         public abstract void CalculateOutput();
         public abstract void ConnectToInput(NetworkLayer inputLayer);
-        public abstract void LoadAndPropagateDeltas(Matrix3D previousDeltas);
+        public abstract void PropagateDeltas(Matrix3D previousDeltas);
 
+    }
+
+    public interface ITrainableLayer
+    {
+        void UpdateWeights();
     }
 }

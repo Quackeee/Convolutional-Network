@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConvolutionalNetwork
 {
-    public class FullConLayer : HiddenLayer
+    public class FullConLayer : HiddenLayer, ITrainableLayer
     {
         Neuron[] _neurons;
         private ActivationFunc _activation;
@@ -27,10 +27,9 @@ namespace ConvolutionalNetwork
             }
         }
 
-        public override void LoadAndPropagateDeltas(Matrix3D previousDeltas)
+        public override void PropagateDeltas(Matrix3D previousDeltas)
         {
-            Console.WriteLine("Calculating deltas in FullConLayer");
-
+            //Console.WriteLine("Calculating deltas in FullConLayer");
             Deltas = _activation.RecalculateDeltas(previousDeltas, _output);
 
             if (_inputLayer is HiddenLayer)
@@ -53,8 +52,8 @@ namespace ConvolutionalNetwork
                     }
                 }
 
-                Console.WriteLine(deltas);
-                (_inputLayer as HiddenLayer).LoadAndPropagateDeltas(deltas);
+                //Console.WriteLine(deltas);
+                (_inputLayer as HiddenLayer).PropagateDeltas(deltas);
             }
         }
 
@@ -74,6 +73,30 @@ namespace ConvolutionalNetwork
 
             foreach (var neuron in _neurons)
                 neuron.ConnectToInput(_inputLayer);
+        }
+
+        public void UpdateWeights()
+        {
+            //Console.WriteLine("updating weights in FullConLayer");
+
+            var diffs = new Matrix3D(_input.Dimensions);
+            //Console.WriteLine("deltas:");
+            //Console.WriteLine(Deltas);
+            for (int n = 0; n < _neurons.Length; n++)
+            {
+                diffs.ZeroInit();
+
+                for (int k = 0; k < InputDepth; k++)
+                    for (int i = 0; i < InputHeight; i++)
+                        for (int j = 0; j < InputWidth; j++)
+                            diffs[k, i, j] -= Deltas[0, n, 0] * _input[k, i, j];
+
+                diffs.Apply((d) => 0.33 * d);
+
+                _neurons[n].UpdateWeights(diffs);
+                
+            }
+            //Console.WriteLine(_neurons[1].Weights);
         }
     }
 }

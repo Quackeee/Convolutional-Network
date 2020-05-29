@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="apple.png" />
+    <Content Include="diamond.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

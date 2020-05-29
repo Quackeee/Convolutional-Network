@@ -12,6 +12,7 @@ namespace ConvolutionalNetwork
     {
         void CalculateOutput();
         void ConnectToInput(NetworkLayer inputLayer);
+        void UpdateWeights(Matrix3D diffs);
     }
 
     class ConvNeuron : INeuron
@@ -48,6 +49,11 @@ namespace ConvolutionalNetwork
 
             Weights = new Matrix3D(inputLayer.OutputDepth, _kernelSize, _kernelSize);
             Weights.RandomInit();
+        }
+
+        public void UpdateWeights(Matrix3D diffs)
+        {
+            Weights += diffs;
         }
     }
 
@@ -89,6 +95,11 @@ namespace ConvolutionalNetwork
             Weights.RandomInit();
 
             IsConnected = true;
+        }
+
+        public void UpdateWeights(Matrix3D diffs)
+        {
+            Weights += diffs;
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConvolutionalNetwork
 {
-    public class ConvLayer : HiddenLayer
+    public class ConvLayer : HiddenLayer, ITrainableLayer
     {
         private ConvNeuron[] _neurons;
         private int _kernelSize;
@@ -59,11 +59,11 @@ namespace ConvolutionalNetwork
             else throw new InvalidOperationException("The Layer is not connected to any input");
         }
 
-        public override void LoadAndPropagateDeltas(Matrix3D previousDeltas)
+        public override void PropagateDeltas(Matrix3D previousDeltas)
         {
             Deltas = _activation.RecalculateDeltas(previousDeltas,Output);
 
-            Console.WriteLine("Calculating deltas in ConvLayer");
+            //Console.WriteLine("Calculating deltas in ConvLayer");
             //throw new NotImplementedException();
 
             if (_inputLayer is HiddenLayer)
@@ -89,12 +89,12 @@ namespace ConvolutionalNetwork
                     }
                 }
 
-                Console.WriteLine(deltas);
-                (_inputLayer as HiddenLayer).LoadAndPropagateDeltas(deltas);
+                //Console.WriteLine(deltas);
+                (_inputLayer as HiddenLayer).PropagateDeltas(deltas);
             }
         }
 
-        
+
         private void _findWeightIndexes()
         {
             Tuple<int, int>[] _findWeightIndexesFor(int i, int j)
@@ -115,12 +115,43 @@ namespace ConvolutionalNetwork
                 return weightIndexes.ToArray();
             }
 
-            _weightIndexes = new Tuple<int, int>[InputHeight,InputWidth][];
+            _weightIndexes = new Tuple<int, int>[InputHeight, InputWidth][];
             for (int i = 0; i < InputHeight; i++)
                 for (int j = 0; j < InputWidth; j++)
                 {
                     _weightIndexes[i, j] = _findWeightIndexesFor(i, j);
                 }
+        }
+
+        public void UpdateWeights()
+        {
+            //Console.WriteLine("updating weights in ConvLayer");
+
+            var diffs = new Matrix3D(InputDepth, _kernelSize, _kernelSize);
+            diffs.ZeroInit();
+
+            for (int k = 0; k < InputDepth; k++)
+            {
+                for (int i = 0; i < _kernelSize; i++)
+                {
+                    int i2max = InputHeight - _kernelSize + i;
+                    for (int j = 0; j < _kernelSize; j++)
+                    {
+                        int j2max = InputWidth - _kernelSize + j;
+                        for (int i2 = i; i2 < i2max; i2++)
+                            for (int j2 = j; j2 < j2max; j2++)
+                                for (int k2 = 0; k2 < OutputDepth; k2++)
+                                    diffs[k, i, j] -= Deltas[k2, i2 - i, j2 - j] * _input[k, i2, j2];
+                    }
+                }
+            }
+
+            diffs.Apply((d) => 0.33 * d);
+            foreach (var neuron in _neurons)
+            {
+                neuron.Weights += diffs;
+                //Console.WriteLine(neuron.Weights);
+            }
         }
     }
 }
