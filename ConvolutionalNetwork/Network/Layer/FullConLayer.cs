@@ -89,11 +89,12 @@ namespace ConvolutionalNetwork
                 for (int k = 0; k < InputDepth; k++)
                     for (int i = 0; i < InputHeight; i++)
                         for (int j = 0; j < InputWidth; j++)
-                            diffs[k, i, j] -= Deltas[0, n, 0] * _input[k, i, j];
+                            diffs[k, i, j] += Deltas[0, n, 0] * _input[k, i, j];
 
-                diffs.Apply((d) => 0.33 * d);
+                diffs.Apply((d) => -0.03 * d);
+                double biasDiff = - 0.03 * Deltas[0, n, 0];
 
-                _neurons[n].UpdateWeights(diffs);
+                _neurons[n].UpdateWeights(diffs,biasDiff);
                 
             }
             //Console.WriteLine(_neurons[1].Weights);

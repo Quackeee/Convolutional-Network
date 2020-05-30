@@ -44,7 +44,7 @@ namespace ConvolutionalNetwork
                     for (int j = 0; j < Output.Width; j++)
                         deltas[k, i, j] = -expectedOutput[k, i, j] / Output[k, i, j];
 
-            //Console.WriteLine(deltas);
+            Console.WriteLine(deltas);
 
             _layers.Last().PropagateDeltas(deltas);
 

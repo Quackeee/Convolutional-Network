@@ -60,6 +60,16 @@ namespace ConvolutionalNetwork
                 }
             }
         }
+        public void Apply(Func<double,double> func)
+        {
+            for (int i = 0; i < Height; i++)
+            {
+                for (int j = 0; j < Width; j++)
+                {
+                    this[i, j] = func(this[i, j]);
+                }
+            }
+        }
 
         public static Matrix operator +(Matrix m1, Matrix m2)
         {

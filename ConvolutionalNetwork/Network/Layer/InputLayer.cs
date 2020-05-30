@@ -28,5 +28,12 @@ namespace ConvolutionalNetwork
             if (rgb) OutputDepth = 3;
             else OutputDepth = 1;
         }
+
+        public InputLayer(int length)
+        {
+            OutputHeight = length;
+            OutputWidth = 1;
+            OutputDepth = 1;
+        }
     }
 }

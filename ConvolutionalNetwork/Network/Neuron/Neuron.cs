@@ -8,18 +8,25 @@ using static ConvolutionalNetwork.Utils;
 
 namespace ConvolutionalNetwork
 {
-    interface INeuron
+
+    abstract class NeuronBase
     {
-        void CalculateOutput();
-        void ConnectToInput(NetworkLayer inputLayer);
-        void UpdateWeights(Matrix3D diffs);
+        internal Matrix3D Weights;
+        protected double _bias = (Rand.NextDouble() -0.5) * 2;
+
+        internal abstract void CalculateOutput();
+        internal abstract void ConnectToInput(NetworkLayer inputLayer);
+        internal void UpdateWeights(Matrix3D diffs, double biasDiff)
+        {
+            Weights += diffs;
+            _bias += biasDiff;
+        }
     }
 
-    class ConvNeuron : INeuron
+    class ConvNeuron : NeuronBase
     {
         private NetworkLayer _inputLayer;
         private Matrix _output;
-        public Matrix3D Weights;
         private int _kernelSize;
 
         public bool IsConnected => _inputLayer != null;
@@ -28,10 +35,13 @@ namespace ConvolutionalNetwork
 
         private Matrix3D _input { get => _inputLayer.Output; }
 
-        public void CalculateOutput()
+        internal override void CalculateOutput()
         {
             if (IsConnected)
+            {
                 _output = ConvolveWhole(_input, Weights);
+                _output.Apply((d) => _bias + d);
+            }
             else throw new InvalidOperationException("The Neuron was not connected");
         }
 
@@ -40,35 +50,26 @@ namespace ConvolutionalNetwork
             _kernelSize = kernelSize;
         }
 
-        public void ConnectToInput(NetworkLayer inputLayer)
+        internal override void ConnectToInput(NetworkLayer inputLayer)
         {
             _inputLayer = inputLayer;
 
-            Debug.WriteLine(inputLayer.OutputDepth);
-            Debug.WriteLine(Weights);
+            //Debug.WriteLine(inputLayer.OutputDepth);
+            //Debug.WriteLine(Weights);
 
             Weights = new Matrix3D(inputLayer.OutputDepth, _kernelSize, _kernelSize);
             Weights.RandomInit();
         }
-
-        public void UpdateWeights(Matrix3D diffs)
-        {
-            Weights += diffs;
-        }
     }
 
-    class Neuron : INeuron
+    class Neuron : NeuronBase
     {
-        public Matrix3D Weights { get; private set; }
-        double _inputSum;
         private NetworkLayer _inputLayer;
 
-        private Func<double, double> _activation = (arg) => arg;
-
         public double Output { get; private set; }
-        public bool IsConnected { get; private set; } = false;
+        public bool IsConnected => _inputLayer != null;
 
-        public void CalculateOutput()
+        internal override void CalculateOutput()
         {
             if (IsConnected)
             {
@@ -77,29 +78,20 @@ namespace ConvolutionalNetwork
                 for (int k = 0; k < Weights.Depth; k++)
                     for (int i = 0; i < Weights.Height; i++)
                         for (int j = 0; j < Weights.Width; j++)
+
                             output += _inputLayer.Output[k, i, j] * Weights[k, i, j];
 
-                _inputSum = output;
-                Output = _activation(output);
+                Output = output + _bias;
             }
             else throw new InvalidOperationException("The Neuron was not connected");
-        } 
+        }
 
-        public void ConnectToInput(NetworkLayer inputLayer)
+        internal override void ConnectToInput(NetworkLayer inputLayer)
         {
             _inputLayer = inputLayer;
 
-
-            //Console.WriteLine($"{inputLayer.OutputDepth} + {inputLayer.OutputHeight} + {inputLayer.OutputWidth}" );
             Weights = new Matrix3D(inputLayer.OutputDepth, inputLayer.OutputHeight, inputLayer.OutputWidth);
             Weights.RandomInit();
-
-            IsConnected = true;
-        }
-
-        public void UpdateWeights(Matrix3D diffs)
-        {
-            Weights += diffs;
         }
     }
 }

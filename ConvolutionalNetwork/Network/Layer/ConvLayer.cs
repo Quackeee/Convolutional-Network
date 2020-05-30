@@ -128,10 +128,11 @@ namespace ConvolutionalNetwork
             //Console.WriteLine("updating weights in ConvLayer");
 
             var diffs = new Matrix3D(InputDepth, _kernelSize, _kernelSize);
-            diffs.ZeroInit();
-
-            for (int k = 0; k < InputDepth; k++)
+            
+            for (int k = 0; k < OutputDepth; k++)
             {
+                diffs.ZeroInit();
+
                 for (int i = 0; i < _kernelSize; i++)
                 {
                     int i2max = InputHeight - _kernelSize + i;
@@ -140,17 +141,23 @@ namespace ConvolutionalNetwork
                         int j2max = InputWidth - _kernelSize + j;
                         for (int i2 = i; i2 < i2max; i2++)
                             for (int j2 = j; j2 < j2max; j2++)
-                                for (int k2 = 0; k2 < OutputDepth; k2++)
-                                    diffs[k, i, j] -= Deltas[k2, i2 - i, j2 - j] * _input[k, i2, j2];
+                                for (int k2 = 0; k2 < InputDepth; k2++)
+                                    diffs[k2, i, j] -= Deltas[k, i2 - i, j2 - j] * _input[k2, i2, j2];
                     }
                 }
-            }
 
-            diffs.Apply((d) => 0.33 * d);
-            foreach (var neuron in _neurons)
-            {
-                neuron.Weights += diffs;
-                //Console.WriteLine(neuron.Weights);
+                double biasDiff = 0;
+
+                for (int i = 0; i < OutputHeight; i++)
+                    for (int j = 0; j < OutputWidth; j++)
+                    {
+                        biasDiff += Deltas[k, i, j];
+                    }
+
+                diffs.Apply((d) => 0.03 * d);
+                biasDiff *= -0.03;
+
+                _neurons[k].UpdateWeights(diffs, biasDiff);
             }
         }
     }
