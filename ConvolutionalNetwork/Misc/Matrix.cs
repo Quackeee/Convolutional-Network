@@ -21,8 +21,8 @@ namespace ConvolutionalNetwork
         }
         public Matrix(int height, int width)
         {
-            Width = width;
             Height = height;
+            Width = width;
 
             _matrix = new double[height, width];
         }

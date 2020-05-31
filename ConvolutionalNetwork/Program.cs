@@ -11,61 +11,27 @@ namespace ConvolutionalNetwork
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Network network = new Network
             (
-                new InputLayer(32, 32),
+                new InputLayer(128, 96, false),
                 new ConvLayer(6),
                 new MaxPoolLayer(2),
                 new ConvLayer(16),
                 new MaxPoolLayer(2),
                 new ConvLayer(120),
                 new FullConLayer(84, ActivationFuncs.Sigmoid),
-                //new FullConLayer(42, ActivationFuncs.Sigmoid),
-                new FullConLayer(2, ActivationFuncs.SoftMax)
-            ) ;
+                new FullConLayer(9, ActivationFuncs.SoftMax)
+            );
 
-            var expectedApple = new Matrix3D(new Matrix(
-                new double[,]
-                  {
-                                      {0},
-                                      {1}
-                  }
-                ));
-            var expectedDiamond = new Matrix3D
-                (
-                new Matrix(
-                new double[,]
-                  {
-                                      {1},
-                                      {0}
-                  }
-                ));
+            network.TrainingSet = new LearningSet(@"D:\Users\Krzysiu\Documents\Studia\Programowanie\AI\ConvolutionalNetwork\ConvolutionalNetwork\LearningSet", false);
+            network.TestSet = new LearningSet(@"D:\Users\Krzysiu\Documents\Studia\Programowanie\AI\ConvolutionalNetwork\ConvolutionalNetwork\TestSet");
 
-            
-            for (int i = 0; i < 1000; i++)
-            {
-                Console.Clear();
-                Console.WriteLine(i);
-                network.FeedForward(new Bitmap(@"D:\Users\Krzysiu\Documents\Studia\Programowanie\AI\ConvolutionalNetwork\ConvolutionalNetwork\apple.png"));
-                Console.WriteLine("Apple:");
-                Console.WriteLine(network.Output);
-                network.BackPropagate(expectedApple);
-                network.FeedForward(new Bitmap(@"D:\Users\Krzysiu\Documents\Studia\Programowanie\AI\ConvolutionalNetwork\ConvolutionalNetwork\diamond.png"));
-                Console.WriteLine("Diamond:");
-                Console.WriteLine(network.Output);
-                network.BackPropagate(expectedDiamond);
-                
-                //Console.ReadKey();
-                Thread.Sleep(100);
-            }
-            network.FeedForward(new Bitmap(@"D:\Users\Krzysiu\Documents\Studia\Programowanie\AI\ConvolutionalNetwork\ConvolutionalNetwork\diamond.png"));
-            Console.WriteLine("Diamond:");
-            Console.WriteLine(network.Output);
-            network.FeedForward(new Bitmap(@"D:\Users\Krzysiu\Documents\Studia\Programowanie\AI\ConvolutionalNetwork\ConvolutionalNetwork\apple.png"));
-            Console.WriteLine("Apple:");
-            Console.WriteLine(network.Output);
+
+            network.Train(10000);
+            network.Test();
+
             Console.ReadKey();
         }
     }

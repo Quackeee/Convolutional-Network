@@ -19,7 +19,13 @@ namespace ConvolutionalNetwork
             else _output = bm.AsMatrixGrayscale();
         }
 
-        public InputLayer(int height, int width, bool rgb = true)
+        public void PushInput(Matrix3D m)
+        {
+            if (m.Height != OutputHeight || m.Width != OutputWidth) throw new ArgumentException("Bitmap is not of proper size");
+            _output = m;
+        }
+
+        public InputLayer(int width, int height, bool rgb = true)
         {
             _rgb = rgb;
             OutputHeight = height;
@@ -27,6 +33,8 @@ namespace ConvolutionalNetwork
 
             if (rgb) OutputDepth = 3;
             else OutputDepth = 1;
+
+            //Console.WriteLine($"{OutputDepth}x{OutputHeight}x{OutputWidth}");
         }
 
         public InputLayer(int length)

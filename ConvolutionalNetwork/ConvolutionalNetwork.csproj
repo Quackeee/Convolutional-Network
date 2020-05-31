@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActivationFuncs\ActivationFunc.cs" />
+    <Compile Include="LearningSet.cs" />
     <Compile Include="Misc\Matrix.cs" />
     <Compile Include="Network\Layer\ConvLayer.cs" />
     <Compile Include="Network\Layer\FullConLayer.cs" />
@@ -63,10 +64,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="apple.png" />
-    <Content Include="diamond.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -25,6 +25,8 @@ namespace ConvolutionalNetwork
             {
                 _neurons[i] = new Neuron();
             }
+
+            //Console.WriteLine($"{OutputDepth}x{OutputHeight}x{OutputWidth}");
         }
 
         public override void PropagateDeltas(Matrix3D previousDeltas)

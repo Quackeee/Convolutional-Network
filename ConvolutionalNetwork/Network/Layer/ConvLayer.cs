@@ -40,6 +40,8 @@ namespace ConvolutionalNetwork
 
             foreach (var n in _neurons) n.ConnectToInput(_inputLayer);
             _findWeightIndexes();
+
+            //Console.WriteLine($"{OutputDepth}x{OutputHeight}x{OutputWidth}");
         }
 
         public override void CalculateOutput()

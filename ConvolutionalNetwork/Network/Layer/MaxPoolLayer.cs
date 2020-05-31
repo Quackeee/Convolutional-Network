@@ -72,6 +72,8 @@ namespace ConvolutionalNetwork
             OutputDepth = _inputLayer.OutputDepth;
             OutputHeight = _inputLayer.OutputHeight / _stride;
             OutputWidth = _inputLayer.OutputWidth / _stride;
+
+            //Console.WriteLine($"{OutputDepth}x{OutputHeight}x{OutputWidth}");
         }
     }
 }

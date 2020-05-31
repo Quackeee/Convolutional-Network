@@ -117,6 +117,8 @@ namespace ConvolutionalNetwork
                 convolution += ConvolveWhole(matrix[k], kernel[k]);
             }
 
+            //Console.WriteLine($"{convolution.Height}x{convolution.Width}");
+
             return convolution;
         }
 
