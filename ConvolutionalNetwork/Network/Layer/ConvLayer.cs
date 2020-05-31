@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -95,8 +96,6 @@ namespace ConvolutionalNetwork
                 (_inputLayer as HiddenLayer).PropagateDeltas(deltas);
             }
         }
-
-
         private void _findWeightIndexes()
         {
             Tuple<int, int>[] _findWeightIndexesFor(int i, int j)
@@ -124,7 +123,6 @@ namespace ConvolutionalNetwork
                     _weightIndexes[i, j] = _findWeightIndexesFor(i, j);
                 }
         }
-
         public void UpdateWeights()
         {
             //Console.WriteLine("updating weights in ConvLayer");
@@ -160,6 +158,13 @@ namespace ConvolutionalNetwork
                 biasDiff *= -0.03;
 
                 _neurons[k].UpdateWeights(diffs, biasDiff);
+            }
+        }
+        public void StreamWeights(StreamWriter sw)
+        {
+            foreach (var neuron in _neurons)
+            {
+                neuron.StreamWeights(sw);
             }
         }
     }

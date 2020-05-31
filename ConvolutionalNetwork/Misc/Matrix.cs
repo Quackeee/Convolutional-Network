@@ -10,8 +10,8 @@ namespace ConvolutionalNetwork
 
     public class Matrix
     {
-        public int Width { get; private set; }
-        public int Height { get; private set; }
+        public int Width => _matrix.GetLength(1);
+        public int Height => _matrix.GetLength(0);
 
         private double[,] _matrix;
         public double this[int i, int j]
@@ -21,8 +21,8 @@ namespace ConvolutionalNetwork
         }
         public Matrix(int height, int width)
         {
-            Height = height;
-            Width = width;
+            //Height = height;
+            //Width = width;
 
             _matrix = new double[height, width];
         }
@@ -30,14 +30,14 @@ namespace ConvolutionalNetwork
         {
             _matrix = matrix.Clone() as double [,] ;
 
-            Height = matrix.GetLength(0);
-            Width = matrix.GetLength(1);
+           // Height = matrix.GetLength(0);
+            //Width = matrix.GetLength(1);
         }
         public Matrix(Matrix matrix)
         {
             _matrix = matrix._matrix.Clone() as double[,];
-            Width = matrix.Width;
-            Height = matrix.Height;
+            //Width = matrix.Width;
+            //Height = matrix.Height;
         }
 
         public void RandomInit(double range = 1)
@@ -110,11 +110,11 @@ namespace ConvolutionalNetwork
     public class Matrix3D
     {
         private Matrix[] _matrices;
-        public Tuple<int, int, int> Dimensions { get; private set; }
+        public Tuple<int, int, int> Dimensions => new Tuple<int, int, int>(Depth, Height, Width);
 
-        public int Width { get; private set; }
-        public int Height { get; private set; }
-        public int Depth { get; private set; }
+        public int Width => _matrices[0].Width;
+        public int Height => _matrices[0].Height;
+        public int Depth => _matrices.Length;
 
         public double this[int k, int i, int j]
         {
@@ -128,17 +128,17 @@ namespace ConvolutionalNetwork
 
         public Matrix3D(int depth, int height, int width)
         {
-            Depth = depth;
-            Height = height;
-            Width = width;
-            Dimensions = new Tuple<int, int, int>(depth, height, width);
+            //Depth = depth;
+            //Height = height;
+            //Width = width;
+            //Dimensions = new Tuple<int, int, int>(depth, height, width);
 
-            _matrices = new Matrix[Depth];
+            _matrices = new Matrix[depth];
             for (int i = 0; i < depth; i++)
             {
                 _matrices[i] = new Matrix(height, width);
             }
-            Dimensions = new Tuple<int, int, int>(Depth, Height, Width);
+            //Dimensions = new Tuple<int, int, int>(Depth, Height, Width);
         }
         public Matrix3D(params Matrix[] matrices)
         {
@@ -146,10 +146,10 @@ namespace ConvolutionalNetwork
 
             _matrices = matrices;
 
-            Depth = matrices.Length;
-            Width = matrices[0].Width;
-            Height = matrices[0].Height;
-            Dimensions = new Tuple<int, int, int>(Depth, Height, Width);
+            //Depth = matrices.Length;
+            //Width = matrices[0].Width;
+            //Height = matrices[0].Height;
+           // Dimensions = new Tuple<int, int, int>(Depth, Height, Width);
         }
         public Matrix3D(Tuple<int, int, int> dimensions) : this(dimensions.Item1, dimensions.Item2, dimensions.Item3)
         {

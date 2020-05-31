@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -100,6 +101,14 @@ namespace ConvolutionalNetwork
                 
             }
             //Console.WriteLine(_neurons[1].Weights);
+        }
+
+        public void StreamWeights(StreamWriter sw)
+        {
+            foreach (var neuron in _neurons)
+            {
+                neuron.StreamWeights(sw);
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,6 +73,8 @@ namespace ConvolutionalNetwork
 
                 for (int i = 0; i < epochs; i++)
                 {
+                    if (i%100 == 0) Save(@".\backup.cnet");
+
                     Console.WriteLine(i);
                     var pair = TrainingSet.GetPairAt(j + k*cathegorySize);
                     FeedForward(pair.Item1);
@@ -121,6 +124,17 @@ namespace ConvolutionalNetwork
                 Console.WriteLine($"We got {goodGuesses / TestSet.Size}% accuracy!");
             }
             else throw new InvalidOperationException("There was no test set included for this network");
+        }
+
+        public void Save(string path)
+        {
+            using (StreamWriter sw = new StreamWriter(path))
+            {
+                foreach (var layer in _layers)
+                {
+                    (layer as ITrainableLayer)?.StreamWeights(sw);
+                }
+            }
         }
     }
 }

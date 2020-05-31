@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,17 @@ namespace ConvolutionalNetwork
         {
             Weights += diffs;
             _bias += biasDiff;
+        }
+        internal void StreamWeights(StreamWriter sw)
+        {
+            Console.WriteLine(Weights.Dimensions);
+            for (int k = 0; k < Weights.Depth; k++)
+                for (int i = 0; i < Weights.Height; i++)
+                    for (int j = 0; j < Weights.Width; j++)
+                    {
+                        sw.WriteLine(Weights[k, i, j]);
+                    }
+            sw.WriteLine(_bias);
         }
     }
 
