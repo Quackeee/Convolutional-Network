@@ -55,8 +55,6 @@ namespace ConvolutionalNetwork
                     for (int j = 0; j < Output.Width; j++)
                         deltas[k, i, j] = -expectedOutput[k, i, j] / Output[k, i, j];
 
-            //Console.WriteLine(deltas);
-
             _layers.Last().PropagateDeltas(deltas);
 
             foreach (var layer in _layers)
@@ -88,8 +86,6 @@ namespace ConvolutionalNetwork
                     if (k == Output.Height) { k = 0; j++; }
                     if (j == cathegorySize) j = 0;
                 }
-
-
             }
             else throw new InvalidOperationException("There was no training set included for this network");
         }
@@ -121,7 +117,7 @@ namespace ConvolutionalNetwork
                         $"that's a {goodOrBad} guess");
                 }
 
-                Console.WriteLine($"We got {goodGuesses / TestSet.Size}% accuracy!");
+                Console.WriteLine($"We got {(double) goodGuesses / TestSet.Size}% accuracy!");
             }
             else throw new InvalidOperationException("There was no test set included for this network");
         }
@@ -133,6 +129,17 @@ namespace ConvolutionalNetwork
                 foreach (var layer in _layers)
                 {
                     (layer as ITrainableLayer)?.StreamWeights(sw);
+                }
+            }
+        }
+
+        public void Load(string path)
+        {
+            using(StreamReader sr = new StreamReader(path))
+            {
+                foreach (var layer in _layers)
+                {
+                    (layer as ITrainableLayer)?.ReadWeights(sr);
                 }
             }
         }

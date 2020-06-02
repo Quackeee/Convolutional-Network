@@ -16,7 +16,7 @@ namespace ConvolutionalNetwork
             _stride = stride;
         }
 
-        public override void PropagateDeltas(Matrix3D previousDeltas)
+        internal override void PropagateDeltas(Matrix3D previousDeltas)
         {
             //Console.WriteLine("Calculating deltas in MaxPoolLayer");
             Deltas = previousDeltas;
@@ -53,7 +53,7 @@ namespace ConvolutionalNetwork
 
         }
 
-        public override void CalculateOutput()
+        internal override void CalculateOutput()
         {
             var output = new Matrix[_input.Depth];
 
@@ -65,7 +65,7 @@ namespace ConvolutionalNetwork
             _output = new Matrix3D(output);
         }
 
-        public override void ConnectToInput(NetworkLayer inputLayer)
+        internal override void ConnectToInput(NetworkLayer inputLayer)
         {
             _inputLayer = inputLayer;
 

@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
+  <Class Name="ConvolutionalNetwork.LearningSet">
+    <Position X="19.75" Y="8.5" Width="1.5" />
+    <Members>
+      <Method Name="LearningSet" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAQAAgQAAAAA=</HashCode>
+      <FileName>LearningSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConvolutionalNetwork.Network">
+    <Position X="16.75" Y="8" Width="1.5" />
+    <Members>
+      <Method Name="Network" Hidden="true" />
+      <Property Name="Output" Hidden="true" />
+      <Method Name="Save" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAggIAAAAIgAAEAAAAIAAAAAQAAAAAAAAAACEAAEAA=</HashCode>
+      <FileName>Network\Network.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConvolutionalNetwork.NeuronBase">
+    <Position X="6.25" Y="9" Width="1.5" />
+    <Members>
+      <Method Name="StreamWeights" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AgAAAAgAAAAAAAAAAgAACAAABAAAAAAAAEAAAAAQAAA=</HashCode>
+      <FileName>Network\Neuron\Neuron.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConvolutionalNetwork.ConvNeuron">
+    <Position X="8.75" Y="8.5" Width="1.5" />
+    <Members>
+      <Property Name="_input" Hidden="true" />
+      <Field Name="_output" Hidden="true" />
+      <Method Name="CalculateOutput" Hidden="true" />
+      <Method Name="ConnectToInput" Hidden="true" />
+      <Method Name="ConvNeuron" Hidden="true" />
+      <Property Name="IsConnected" Hidden="true" />
+      <Property Name="Output" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAIAAABAAAAICAAAEBAAAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>Network\Neuron\Neuron.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConvolutionalNetwork.Neuron">
+    <Position X="8.75" Y="10" Width="1.5" />
+    <Members>
+      <Method Name="CalculateOutput" Hidden="true" />
+      <Method Name="ConnectToInput" Hidden="true" />
+      <Property Name="IsConnected" Hidden="true" />
+    </Members>
+    <InheritanceLine Type="ConvolutionalNetwork.NeuronBase" FixedToPoint="true">
+      <Path>
+        <Point X="7.75" Y="10.812" />
+        <Point X="8.75" Y="10.812" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAABAAAAICAAAAAAAAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>Network\Neuron\Neuron.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConvolutionalNetwork.MaxPoolLayer" Collapsed="true">
+    <Position X="11.25" Y="8" Width="1.5" />
+    <InheritanceLine Type="ConvolutionalNetwork.HiddenLayer" FixedToPoint="true">
+      <Path>
+        <Point X="14" Y="8.375" />
+        <Point X="12.75" Y="8.375" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAEAAAAQAAA=</HashCode>
+      <FileName>Network\Layer\MaxPoolLayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConvolutionalNetwork.InputLayer">
+    <Position X="16.75" Y="5.75" Width="1.25" />
+    <Members>
+      <Field Name="_rgb" Hidden="true" />
+      <Method Name="InputLayer" Hidden="true" />
+    </Members>
+    <InheritanceLine Type="ConvolutionalNetwork.NetworkLayer" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="15.5" Y="6.312" />
+        <Point X="16.75" Y="6.312" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Network\Layer\InputLayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConvolutionalNetwork.FullConLayer" Collapsed="true">
+    <Position X="11.25" Y="10" Width="1.5" />
+    <InheritanceLine Type="ConvolutionalNetwork.HiddenLayer" FixedToPoint="true">
+      <Path>
+        <Point X="14" Y="10.375" />
+        <Point X="12.75" Y="10.375" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AEAAAAgAAAAAAAgAAgAACAAABAAAAAAAACAAAAAQAAA=</HashCode>
+      <FileName>Network\Layer\FullConLayer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ConvolutionalNetwork.ConvLayer" Collapsed="true">
+    <Position X="11.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAgAAAAAAAgAAgAACAAAFAAAAQAAACAAAAAQAAA=</HashCode>
+      <FileName>Network\Layer\ConvLayer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ConvolutionalNetwork.NetworkLayer">
+    <Position X="14" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAACAIAAAAABAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Network\Layer\Base\LayerBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConvolutionalNetwork.HiddenLayer">
+    <Position X="14" Y="8" Width="1.5" />
+    <Members>
+      <Property Name="_input" Hidden="true" />
+      <Property Name="InputDepth" Hidden="true" />
+      <Property Name="InputHeight" Hidden="true" />
+      <Property Name="InputWidth" Hidden="true" />
+      <Property Name="IsConnected" Hidden="true" />
+    </Members>
+    <InheritanceLine Type="ConvolutionalNetwork.NetworkLayer" ManuallyRouted="true" FixedFromPoint="true">
+      <Path>
+        <Point X="14.75" Y="7.132" />
+        <Point X="14.75" Y="7.625" />
+        <Point X="14.75" Y="7.625" />
+        <Point X="14.75" Y="8" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>QEAgAAIAAAIAAAhAAAAACAAAAAAEAAAAAAAAAAIQAAA=</HashCode>
+      <FileName>Network\Layer\Base\LayerBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConvolutionalNetwork.ActivationFunc">
+    <Position X="14" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>ActivationFuncs\ActivationFunc.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConvolutionalNetwork._ReLU" Collapsed="true">
+    <Position X="14" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>ActivationFuncs\ActivationFunc.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConvolutionalNetwork._SoftMax" Collapsed="true">
+    <Position X="16.25" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>ActivationFuncs\ActivationFunc.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConvolutionalNetwork._Sigmoid" Collapsed="true">
+    <Position X="11.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>ActivationFuncs\ActivationFunc.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConvolutionalNetwork.ActivationFuncs">
+    <Position X="11.25" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAABAAAAEAAAAAAA=</HashCode>
+      <FileName>ActivationFuncs\ActivationFunc.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

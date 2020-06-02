@@ -128,28 +128,17 @@ namespace ConvolutionalNetwork
 
         public Matrix3D(int depth, int height, int width)
         {
-            //Depth = depth;
-            //Height = height;
-            //Width = width;
-            //Dimensions = new Tuple<int, int, int>(depth, height, width);
-
             _matrices = new Matrix[depth];
             for (int i = 0; i < depth; i++)
             {
                 _matrices[i] = new Matrix(height, width);
             }
-            //Dimensions = new Tuple<int, int, int>(Depth, Height, Width);
         }
         public Matrix3D(params Matrix[] matrices)
         {
             if (matrices.Length == 0) throw new ArgumentException("There must be at least one Matrix provided");
 
             _matrices = matrices;
-
-            //Depth = matrices.Length;
-            //Width = matrices[0].Width;
-            //Height = matrices[0].Height;
-           // Dimensions = new Tuple<int, int, int>(Depth, Height, Width);
         }
         public Matrix3D(Tuple<int, int, int> dimensions) : this(dimensions.Item1, dimensions.Item2, dimensions.Item3)
         {

@@ -32,7 +32,7 @@ namespace ConvolutionalNetwork
             }
         }
 
-        public override void ConnectToInput(NetworkLayer inputLayer)
+        internal override void ConnectToInput(NetworkLayer inputLayer)
         {
             _inputLayer = inputLayer;
 
@@ -45,7 +45,7 @@ namespace ConvolutionalNetwork
             //Console.WriteLine($"{OutputDepth}x{OutputHeight}x{OutputWidth}");
         }
 
-        public override void CalculateOutput()
+        internal override void CalculateOutput()
         {
             if (IsConnected)
             {
@@ -62,7 +62,7 @@ namespace ConvolutionalNetwork
             else throw new InvalidOperationException("The Layer is not connected to any input");
         }
 
-        public override void PropagateDeltas(Matrix3D previousDeltas)
+        internal override void PropagateDeltas(Matrix3D previousDeltas)
         {
             Deltas = _activation.RecalculateDeltas(previousDeltas,Output);
 
@@ -165,6 +165,14 @@ namespace ConvolutionalNetwork
             foreach (var neuron in _neurons)
             {
                 neuron.StreamWeights(sw);
+            }
+        }
+
+        public void ReadWeights(StreamReader sr)
+        {
+            foreach (var neuron in _neurons)
+            {
+                neuron.ReadWeights(sr);
             }
         }
     }

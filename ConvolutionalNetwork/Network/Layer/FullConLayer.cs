@@ -30,7 +30,7 @@ namespace ConvolutionalNetwork
             //Console.WriteLine($"{OutputDepth}x{OutputHeight}x{OutputWidth}");
         }
 
-        public override void PropagateDeltas(Matrix3D previousDeltas)
+        internal override void PropagateDeltas(Matrix3D previousDeltas)
         {
             //Console.WriteLine("Calculating deltas in FullConLayer");
             Deltas = _activation.RecalculateDeltas(previousDeltas, _output);
@@ -60,7 +60,7 @@ namespace ConvolutionalNetwork
             }
         }
 
-        public override void CalculateOutput()
+        internal override void CalculateOutput()
         {
             for (int i = 0; i < OutputHeight; i++)
             {
@@ -70,7 +70,7 @@ namespace ConvolutionalNetwork
             _activation.Run(_output);
         }
 
-        public override void ConnectToInput(NetworkLayer inputLayer)
+        internal override void ConnectToInput(NetworkLayer inputLayer)
         {
             _inputLayer = inputLayer;
 
@@ -108,6 +108,14 @@ namespace ConvolutionalNetwork
             foreach (var neuron in _neurons)
             {
                 neuron.StreamWeights(sw);
+            }
+        }
+
+        public void ReadWeights(StreamReader sr)
+        {
+            foreach (var neuron in _neurons)
+            {
+                neuron.ReadWeights(sr);
             }
         }
     }

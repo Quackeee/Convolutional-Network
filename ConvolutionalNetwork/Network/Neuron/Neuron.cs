@@ -24,7 +24,6 @@ namespace ConvolutionalNetwork
         }
         internal void StreamWeights(StreamWriter sw)
         {
-            Console.WriteLine(Weights.Dimensions);
             for (int k = 0; k < Weights.Depth; k++)
                 for (int i = 0; i < Weights.Height; i++)
                     for (int j = 0; j < Weights.Width; j++)
@@ -32,6 +31,16 @@ namespace ConvolutionalNetwork
                         sw.WriteLine(Weights[k, i, j]);
                     }
             sw.WriteLine(_bias);
+        }
+        internal void ReadWeights(StreamReader sr)
+        {
+            for (int k = 0; k < Weights.Depth; k++)
+                for (int i = 0; i < Weights.Height; i++)
+                    for (int j = 0; j < Weights.Width; j++)
+                    {
+                        Weights[k, i, j] = Convert.ToDouble(sr.ReadLine());
+                    }
+            _bias = Convert.ToDouble(sr.ReadLine());
         }
     }
 
@@ -41,7 +50,7 @@ namespace ConvolutionalNetwork
         private Matrix _output;
         private int _kernelSize;
 
-        public bool IsConnected => _inputLayer != null;
+        private bool IsConnected => _inputLayer != null;
 
         public Matrix Output { get => _output; }
 
@@ -57,7 +66,7 @@ namespace ConvolutionalNetwork
             else throw new InvalidOperationException("The Neuron was not connected");
         }
 
-        public ConvNeuron(int kernelSize)
+        internal ConvNeuron(int kernelSize)
         {
             _kernelSize = kernelSize;
         }
@@ -66,12 +75,11 @@ namespace ConvolutionalNetwork
         {
             _inputLayer = inputLayer;
 
-            //Debug.WriteLine(inputLayer.OutputDepth);
-            //Debug.WriteLine(Weights);
-
             Weights = new Matrix3D(inputLayer.OutputDepth, _kernelSize, _kernelSize);
             Weights.RandomInit();
         }
+
+
     }
 
     class Neuron : NeuronBase
@@ -79,7 +87,7 @@ namespace ConvolutionalNetwork
         private NetworkLayer _inputLayer;
 
         public double Output { get; private set; }
-        public bool IsConnected => _inputLayer != null;
+        private bool IsConnected => _inputLayer != null;
 
         internal override void CalculateOutput()
         {

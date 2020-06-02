@@ -11,9 +11,9 @@ namespace ConvolutionalNetwork
 {
     class LearningSet
     {
-        private List<Tuple<Matrix3D, Matrix3D>> PictureValuePairs = new List<Tuple<Matrix3D, Matrix3D>>();
+        private List<Tuple<Matrix3D, Matrix3D>> _pictureValuePairs = new List<Tuple<Matrix3D, Matrix3D>>();
 
-        public int Size { get => PictureValuePairs.Count; }
+        public int Size { get => _pictureValuePairs.Count; }
 
 
         public LearningSet(string path, bool rgb = true)
@@ -31,7 +31,7 @@ namespace ConvolutionalNetwork
                     outputs[i] = new Matrix3D(1, dirs.Length, 1);
                     outputs[i].ZeroInit();
                     outputs[i][0, i, 0] = 1;
-                    
+
                 }
 
                 var exampleFile = new Bitmap(dirs[0].GetFiles()[0].FullName);
@@ -51,25 +51,26 @@ namespace ConvolutionalNetwork
                                                                 $"recieved {picture.Width}x{picture.Height}");
 
 
-                        PictureValuePairs.Add
+                        _pictureValuePairs.Add
                             (
-                            rgb?
-                            new Tuple<Matrix3D, Matrix3D>(picture.AsMatrixRGB(), outputs[i]):
+                            rgb ?
+                            new Tuple<Matrix3D, Matrix3D>(picture.AsMatrixRGB(), outputs[i]) :
                             new Tuple<Matrix3D, Matrix3D>(picture.AsMatrixGrayscale(), outputs[i])
                             );
                     }
                 }
             }
+            else throw new NotImplementedException("Other methods for creating a learning set are not yet implemented");
         }
 
         public Tuple<Matrix3D,Matrix3D> GetPairAt(int index)
         {
-            return PictureValuePairs[index];
+            return _pictureValuePairs[index];
         }
 
         public Tuple<Matrix3D, Matrix3D> GetRandomPair()
         {
-            return PictureValuePairs[Rand.Next(PictureValuePairs.Count)];
+            return _pictureValuePairs[Rand.Next(_pictureValuePairs.Count)];
         }
     }
 }

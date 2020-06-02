@@ -24,22 +24,24 @@ namespace ConvolutionalNetwork
         protected NetworkLayer _inputLayer;
 
 
-        public bool IsConnected => _inputLayer != null;
+        protected bool IsConnected => _inputLayer != null;
         public Matrix3D Deltas { get; protected set; }
         public int InputDepth => _inputLayer.OutputDepth;
         public int InputHeight => _inputLayer.OutputHeight;
         public int InputWidth => _inputLayer.OutputWidth;
 
 
-        public abstract void CalculateOutput();
-        public abstract void ConnectToInput(NetworkLayer inputLayer);
-        public abstract void PropagateDeltas(Matrix3D previousDeltas);
+        internal abstract void CalculateOutput();
+        internal abstract void ConnectToInput(NetworkLayer inputLayer);
+        internal abstract void PropagateDeltas(Matrix3D previousDeltas);
 
+        protected ActivationFunc _activation;
     }
 
     public interface ITrainableLayer
     {
         void UpdateWeights();
         void StreamWeights(StreamWriter sw);
+        void ReadWeights(StreamReader sr);
     }
 }
