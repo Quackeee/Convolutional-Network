@@ -22,7 +22,7 @@ namespace ConvolutionalNetwork
     {
         protected Matrix3D _input => _inputLayer.Output;
         protected NetworkLayer _inputLayer;
-
+        
 
         protected bool IsConnected => _inputLayer != null;
         public Matrix3D Deltas { get; protected set; }
@@ -38,7 +38,7 @@ namespace ConvolutionalNetwork
         protected ActivationFunc _activation;
     }
 
-    public interface ITrainableLayer
+    internal interface ITrainableLayer
     {
         void UpdateWeights();
         void StreamWeights(StreamWriter sw);

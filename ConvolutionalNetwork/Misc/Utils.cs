@@ -111,15 +111,38 @@ namespace ConvolutionalNetwork
         public static Matrix ConvolveWhole(Matrix3D matrix, Matrix3D kernel)
         {
             var convolution = new Matrix(matrix[0].Height - kernel[0].Height + 1, matrix[0].Width - kernel[0].Width + 1);
+            convolution.ZeroInit();
 
             for (int k = 0; k < matrix.Depth; k++)
             {
-                convolution += ConvolveWhole(matrix[k], kernel[k]);
+                for (int i = 0; i < convolution.Height; i++)
+                {
+                    for (int j = 0; j < convolution.Width; j++)
+                    {
+                        convolution[i, j] += Convolve(matrix[k], kernel[k], i, j);
+                    }
+                }
             }
 
             //Console.WriteLine($"{convolution.Height}x{convolution.Width}");
 
             return convolution;
+        }
+
+        public static void ConvolveWholeInto(Matrix3D matrix, Matrix3D kernel, Matrix convolution)
+        {
+            convolution.ZeroInit();
+
+            for (int k = 0; k < matrix.Depth; k++)
+            {
+                for (int i = 0; i < convolution.Height; i++)
+                {
+                    for (int j = 0; j < convolution.Width; j++)
+                    {
+                        convolution[i, j] += Convolve(matrix[k], kernel[k], i, j);
+                    }
+                }
+            }
         }
 
         public static Matrix3D AsMatrixRGB(this Bitmap bitmap)

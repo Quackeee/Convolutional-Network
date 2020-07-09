@@ -104,7 +104,13 @@ namespace ConvolutionalNetwork
             }
             return s;
         }
-    
+
+        internal void ZeroInit()
+        {
+            for (int i = 0; i < Height; i++)
+                for (int j = 0; j < Width; j++)
+                    this[i, j] = 0;
+        }
     }
 
     public class Matrix3D
@@ -188,6 +194,16 @@ namespace ConvolutionalNetwork
                         sum[k, i, j] = m1[k, i, j] + m2[k, i, j];
             return sum;
         }
+
+        public void Add(Matrix3D other)
+        {
+            for (int k = 0; k < Depth; k++)
+                for (int i = 0; i < Height; i++)
+                    for (int j = 0; j < Width; j++)
+                        this[k, i, j] += other[k, i, j];
+        }
+
+
         public static implicit operator Matrix3D(Matrix m) => new Matrix3D(m);
         public static implicit operator Matrix[](Matrix3D m) => m._matrices;
 

@@ -10,7 +10,7 @@ using static ConvolutionalNetwork.Utils;
 namespace ConvolutionalNetwork
 {
 
-    abstract class NeuronBase
+    internal abstract class NeuronBase
     {
         internal Matrix3D Weights;
         protected double _bias = (Rand.NextDouble() -0.5) * 2;
