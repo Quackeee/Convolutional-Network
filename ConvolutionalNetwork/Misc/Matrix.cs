@@ -10,8 +10,8 @@ namespace ConvolutionalNetwork
 
     public class Matrix
     {
-        public int Width => _matrix.GetLength(1);
-        public int Height => _matrix.GetLength(0);
+        public int Width;
+        public int Height;
 
         private double[,] _matrix;
         public double this[int i, int j]
@@ -21,8 +21,8 @@ namespace ConvolutionalNetwork
         }
         public Matrix(int height, int width)
         {
-            //Height = height;
-            //Width = width;
+            Height = height;
+            Width = width;
 
             _matrix = new double[height, width];
         }
@@ -30,14 +30,14 @@ namespace ConvolutionalNetwork
         {
             _matrix = matrix.Clone() as double [,] ;
 
-           // Height = matrix.GetLength(0);
-            //Width = matrix.GetLength(1);
+            Height = matrix.GetLength(0);
+            Width = matrix.GetLength(1);
         }
         public Matrix(Matrix matrix)
         {
             _matrix = matrix._matrix.Clone() as double[,];
-            //Width = matrix.Width;
-            //Height = matrix.Height;
+            Width = matrix.Width;
+            Height = matrix.Height;
         }
 
         public void RandomInit(double range = 1)
@@ -163,7 +163,6 @@ namespace ConvolutionalNetwork
         }
         public Matrix3D(Tuple<int, int, int> dimensions) : this(dimensions.Item1, dimensions.Item2, dimensions.Item3)
         {
-
         }
 
         public void RandomInit(double range = 1)
