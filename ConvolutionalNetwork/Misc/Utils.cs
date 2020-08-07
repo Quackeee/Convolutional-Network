@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using ConvolutionalNetwork.Misc;
 
 namespace ConvolutionalNetwork
 {
@@ -23,7 +24,7 @@ namespace ConvolutionalNetwork
             }
         }
 
-        public static double Convolve(Matrix matrix, Matrix kernel)
+        public static double Convolve(IMatrix matrix, IMatrix kernel)
         {
             //if (m1.Dimensions != m2.Dimensions)
                 //throw new InvalidOperationException("Can't convolve matrices of different dimensions");
@@ -41,7 +42,7 @@ namespace ConvolutionalNetwork
             return convolution;
         }
 
-        public static double Convolve(Matrix matrix, Matrix kernel, int yoffset, int xoffset)
+        public static double Convolve(IMatrix matrix, IMatrix kernel, int yoffset, int xoffset)
         {
             double convolution = 0;
 
@@ -55,7 +56,7 @@ namespace ConvolutionalNetwork
             return convolution;
         }
     
-        public static Matrix MaxPool(Matrix matrix, int stride)
+        public static IMatrix MaxPool(IMatrix matrix, int stride)
         {
             if (matrix.Width % stride != 0 || matrix.Height % stride != 0)
                 throw new InvalidOperationException(
@@ -67,7 +68,7 @@ namespace ConvolutionalNetwork
             int polledHeight = matrix.Height / stride;
 
 
-            Matrix polledMatrix = new Matrix(polledHeight, polledWidth);
+            IMatrix polledMatrix = new Matrix(polledHeight, polledWidth);
 
                 for (int l = 0; l < polledHeight; l++)
                 {
@@ -92,7 +93,7 @@ namespace ConvolutionalNetwork
             return polledMatrix;
         }
     
-        public static Matrix ConvolveWhole(Matrix matrix, Matrix kernel)
+        public static IMatrix ConvolveWhole(IMatrix matrix, IMatrix kernel)
         {
 
             var convolution = new Matrix(matrix.Height - kernel.Height + 1, matrix.Width - kernel.Width + 1);
@@ -108,7 +109,7 @@ namespace ConvolutionalNetwork
             return convolution;
         }
 
-        public static Matrix ConvolveWhole(Matrix3D matrix, Matrix3D kernel)
+        public static IMatrix ConvolveWhole(IMatrix3D matrix, IMatrix3D kernel)
         {
             var convolution = new Matrix(matrix[0].Height - kernel[0].Height + 1, matrix[0].Width - kernel[0].Width + 1);
 
@@ -128,7 +129,7 @@ namespace ConvolutionalNetwork
             return convolution;
         }
 
-        public static void ConvolveWholeInto(Matrix3D matrix, Matrix3D kernel, Matrix convolution)
+        public static void ConvolveWholeInto(IMatrix3D matrix, IMatrix3D kernel, IMatrix convolution)
         {
             convolution.ZeroInit();
 
@@ -144,11 +145,11 @@ namespace ConvolutionalNetwork
             }
         }
 
-        public static Matrix3D AsMatrixRGB(this Bitmap bitmap)
+        public static IMatrix3D AsMatrixRGB(this Bitmap bitmap)
         {
-            var rMatrix = new Matrix(bitmap.Height, bitmap.Width);
-            var gMatrix = new Matrix(bitmap.Height, bitmap.Width);
-            var bMatrix = new Matrix(bitmap.Height, bitmap.Width);
+            var rMatrix = Factory.CreateMatrix(bitmap.Height, bitmap.Width);
+            var gMatrix = Factory.CreateMatrix(bitmap.Height, bitmap.Width);
+            var bMatrix = Factory.CreateMatrix(bitmap.Height, bitmap.Width);
 
             for (int i = 0; i < bitmap.Height; i++)
                 for (int j = 0; j < bitmap.Width; j++)
@@ -162,12 +163,12 @@ namespace ConvolutionalNetwork
                 for (int j = 0; j < bitmap.Width; j++)
                     bMatrix[i, j] = bitmap.GetPixel(j, i).B/255;
 
-            return new Matrix3D(rMatrix, bMatrix, bMatrix);
+            return Factory.CreateMatrix3D(rMatrix, bMatrix, bMatrix);
         }
 
-        public static Matrix AsMatrixGrayscale(this Bitmap bitmap)
+        public static IMatrix AsMatrixGrayscale(this Bitmap bitmap)
         {
-            var output = new Matrix(bitmap.Height, bitmap.Width);
+            var output = Factory.CreateMatrix(bitmap.Height, bitmap.Width);
 
             for (int i = 0; i < bitmap.Height; i++)
                 for (int j = 0; j < bitmap.Width; j++)
@@ -176,10 +177,10 @@ namespace ConvolutionalNetwork
             return output;
         }
 
-        public static Matrix3D CreateVersor(int dimensions, int direction)
+        public static IMatrix3D CreateVersor(int dimensions, int direction)
         {
             if (direction >= dimensions || direction < 0) throw new ArgumentOutOfRangeException("direction", "direction must be at least 0 and lower than dimensions");
-            var versor = new Matrix3D(1, dimensions, 1);
+            var versor = Factory.CreateMatrix3D(1, dimensions, 1);
             versor[0, direction, 0] = 1;
             return versor;
         }

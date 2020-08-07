@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConvolutionalNetwork.Misc;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -48,7 +49,7 @@ namespace ConvolutionalNetwork
         {
             if (IsConnected)
             {
-                var output = new Matrix[OutputDepth];
+                var output = new IMatrix[OutputDepth];
                 var calculations = new Task[OutputDepth];
 
                 for (int i = 0; i < OutputDepth; i++)
@@ -65,13 +66,13 @@ namespace ConvolutionalNetwork
 
                 Task.WaitAll(calculations);
 
-                _output = new Matrix3D(output);
+                _output = Factory.CreateMatrix3D(output);
                 _activation.Run(_output);
             }
             else throw new InvalidOperationException("The Layer is not connected to any input");
         }
 
-        internal override void PropagateDeltas(Matrix3D previousDeltas)
+        internal override void PropagateDeltas(IMatrix3D previousDeltas)
         {
             var sw = Stopwatch.StartNew();
             Deltas = _activation.RecalculateDeltas(previousDeltas,Output);

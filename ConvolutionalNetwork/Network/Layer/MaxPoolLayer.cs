@@ -17,7 +17,7 @@ namespace ConvolutionalNetwork
             _stride = stride;
         }
 
-        internal override void PropagateDeltas(Matrix3D previousDeltas)
+        internal override void PropagateDeltas(IMatrix3D previousDeltas)
         {
             Deltas = previousDeltas;
 
@@ -58,7 +58,7 @@ namespace ConvolutionalNetwork
 
         internal override void CalculateOutput()
         {
-            var output = new Matrix[_input.Depth];
+            var output = new IMatrix[_input.Depth];
             var calculations = new Task[_input.Depth];
 
             for (int i = 0; i < _input.Depth; i++)

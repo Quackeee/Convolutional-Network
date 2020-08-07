@@ -47,14 +47,14 @@ namespace ConvolutionalNetwork
     class ConvNeuron : NeuronBase
     {
         private NetworkLayer _inputLayer;
-        private Matrix _output;
+        private IMatrix _output;
         private int _kernelSize;
 
         private bool IsConnected => _inputLayer != null;
 
-        public Matrix Output { get => _output; }
+        public IMatrix Output { get => _output; }
 
-        private Matrix3D _input { get => _inputLayer.Output; }
+        private IMatrix3D _input { get => _inputLayer.Output; }
 
         internal override void CalculateOutput()
         {

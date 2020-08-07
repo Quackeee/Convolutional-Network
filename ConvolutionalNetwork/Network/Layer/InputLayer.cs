@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConvolutionalNetwork.Misc;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -11,12 +12,11 @@ namespace ConvolutionalNetwork
     {
         private bool _rgb;
 
-        public void PushInput(Bitmap bm)
+        public void PushInput(IMatrix3D bm)
         {
             if (bm.Height != OutputHeight || bm.Width != OutputWidth) throw new ArgumentException("Bitmap is not of proper size");
 
-            if (_rgb) _output = bm.AsMatrixRGB();
-            else _output = bm.AsMatrixGrayscale();
+            _output = bm;
         }
 
         public void PushInput(Matrix3D m)

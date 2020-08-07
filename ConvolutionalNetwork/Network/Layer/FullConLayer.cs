@@ -29,7 +29,7 @@ namespace ConvolutionalNetwork
 
         }
 
-        internal override void PropagateDeltas(Matrix3D previousDeltas)
+        internal override void PropagateDeltas(IMatrix3D previousDeltas)
         {
 
             var sw = Stopwatch.StartNew();

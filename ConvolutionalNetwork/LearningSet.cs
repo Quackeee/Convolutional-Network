@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConvolutionalNetwork.Misc;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -18,7 +19,7 @@ namespace ConvolutionalNetwork
         private int _cathegoryCount;
 
 
-        private List<Tuple<Matrix3D, Matrix3D>> _pictureValuePairs = new List<Tuple<Matrix3D, Matrix3D>>();
+        private List<Tuple<IMatrix3D, IMatrix3D>> _pictureValuePairs = new List<Tuple<IMatrix3D, IMatrix3D>>();
 
         public int Size { get => _pictureValuePairs.Count; }
 
@@ -29,12 +30,12 @@ namespace ConvolutionalNetwork
             LoadSet(path);
         }
 
-        public Tuple<Matrix3D,Matrix3D> GetPairAt(int index)
+        public Tuple<IMatrix3D, IMatrix3D> GetPairAt(int index)
         {
             return _pictureValuePairs[index];
         }
 
-        public Tuple<Matrix3D, Matrix3D> GetRandomPair()
+        public Tuple<IMatrix3D, IMatrix3D> GetRandomPair()
         {
             return _pictureValuePairs[Rand.Next(_pictureValuePairs.Count)];
         }
@@ -71,7 +72,7 @@ namespace ConvolutionalNetwork
             else throw new NotImplementedException("Other methods for creating a learning set are not yet implemented");
         }
 
-        private Matrix3D FileToMatrix3D(FileInfo file)
+        private IMatrix3D FileToMatrix3D(FileInfo file)
         {
             var picture = new Bitmap(file.FullName);
 
@@ -81,7 +82,7 @@ namespace ConvolutionalNetwork
                                                     $"recieved {picture.Width}x{picture.Height}");
 
 
-             return _rgb ? picture.AsMatrixRGB() : picture.AsMatrixGrayscale();
+             return _rgb ? picture.AsMatrixRGB() : Factory.CreateMatrix3D(picture.AsMatrixGrayscale());
         }
 
         private async Task FillPictureValuePairsAsync(DirectoryInfo dir, int index)

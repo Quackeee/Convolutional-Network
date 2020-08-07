@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -49,7 +51,13 @@
   <ItemGroup>
     <Compile Include="ActivationFuncs\ActivationFunc.cs" />
     <Compile Include="LearningSet.cs" />
-    <Compile Include="Misc\Matrix.cs" />
+    <Compile Include="Misc\Matrix\Classical\Matrix3D.cs" />
+    <Compile Include="Misc\Factory.cs" />
+    <Compile Include="Misc\Matrix\GPUAccelleratied\GpuMatrix.cs" />
+    <Compile Include="Misc\Matrix\IMatrix.cs" />
+    <Compile Include="Misc\Matrix\GPUAccelleratied\GpuMatrix3D.cs" />
+    <Compile Include="Misc\Matrix\IMatrix3D.cs" />
+    <Compile Include="Misc\Matrix\Classical\Matrix.cs" />
     <Compile Include="Network\Layer\ConvLayer.cs" />
     <Compile Include="Network\Layer\FullConLayer.cs" />
     <Compile Include="Network\Layer\Base\LayerBase.cs" />
@@ -65,6 +73,9 @@
     <None Include="App.config" />
     <None Include="Diagram.cd" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Misc\Base\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -11,8 +11,8 @@ namespace ConvolutionalNetwork
 {
     public abstract class NetworkLayer
     {
-        protected Matrix3D _output;
-        public Matrix3D Output { get => _output; }
+        protected IMatrix3D _output;
+        public IMatrix3D Output { get => _output; }
 
         public int OutputDepth { get; protected set; }
         public int OutputHeight { get; protected set; }
@@ -20,12 +20,12 @@ namespace ConvolutionalNetwork
     }
     public abstract class HiddenLayer : NetworkLayer
     {
-        protected Matrix3D _input => _inputLayer.Output;
+        protected IMatrix3D _input => _inputLayer.Output;
         protected NetworkLayer _inputLayer;
         
 
         protected bool IsConnected => _inputLayer != null;
-        public Matrix3D Deltas { get; protected set; }
+        public IMatrix3D Deltas { get; protected set; }
         public int InputDepth => _inputLayer.OutputDepth;
         public int InputHeight => _inputLayer.OutputHeight;
         public int InputWidth => _inputLayer.OutputWidth;
@@ -33,7 +33,7 @@ namespace ConvolutionalNetwork
 
         internal abstract void CalculateOutput();
         internal abstract void ConnectToInput(NetworkLayer inputLayer);
-        internal abstract void PropagateDeltas(Matrix3D previousDeltas);
+        internal abstract void PropagateDeltas(IMatrix3D previousDeltas);
 
         protected ActivationFunc _activation;
     }

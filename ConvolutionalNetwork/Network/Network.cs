@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConvolutionalNetwork.Misc;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -16,7 +17,7 @@ namespace ConvolutionalNetwork
         public LearningSet TrainingSet;
         public LearningSet TestSet;
 
-        public Matrix3D Output { get => _layers.Last().Output; }
+        public IMatrix3D Output { get => _layers.Last().Output; }
 
         public Network(InputLayer inputLayer, params HiddenLayer[] layers)
         {
@@ -31,7 +32,7 @@ namespace ConvolutionalNetwork
             }
         }
 
-        public void FeedForward(Bitmap bm)
+        public void FeedForward(IMatrix3D bm)
         {
             _input.PushInput(bm);
 
@@ -47,9 +48,9 @@ namespace ConvolutionalNetwork
                 layer.CalculateOutput();
         }
 
-        public void BackPropagate(Matrix3D expectedOutput)
+        public void BackPropagate(IMatrix3D expectedOutput)
         {
-            var deltas = new Matrix3D(expectedOutput.Dimensions);
+            var deltas = Factory.CreateMatrix3D(expectedOutput.Dimensions);
 
             var sw = Stopwatch.StartNew();
 

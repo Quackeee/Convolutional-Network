@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConvolutionalNetwork.Misc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,17 +10,17 @@ namespace ConvolutionalNetwork
 {
     public abstract class ActivationFunc 
     {
-        internal abstract Action<Matrix3D> Run { get; }
-        internal abstract Matrix3D RecalculateDeltas(Matrix3D oldDeltas, Matrix3D outputs);
+        internal abstract Action<IMatrix3D> Run { get; }
+        internal abstract IMatrix3D RecalculateDeltas(IMatrix3D oldDeltas, IMatrix3D outputs);
     }
 
     internal class _ReLU : ActivationFunc
     {
-        internal override Action<Matrix3D> Run => (arg) => arg.Apply( (d) => d < 0 ? 0 : d );
+        internal override Action<IMatrix3D> Run => (arg) => arg.Apply( (d) => d < 0 ? 0 : d );
 
-        internal override Matrix3D RecalculateDeltas(Matrix3D oldDeltas, Matrix3D outputs)
+        internal override IMatrix3D RecalculateDeltas(IMatrix3D oldDeltas, IMatrix3D outputs)
         {
-            var newDeltas = new Matrix3D(oldDeltas.Dimensions);
+            var newDeltas = Factory.CreateMatrix3D(oldDeltas.Dimensions);
 
             for (int k = 0; k < oldDeltas.Depth; k++)
                 for (int i = 0; i < oldDeltas.Height; i++)
@@ -32,7 +33,7 @@ namespace ConvolutionalNetwork
 
     internal class _SoftMax : ActivationFunc
     {
-        internal override Action<Matrix3D> Run => 
+        internal override Action<IMatrix3D> Run => 
             (arg) =>
             {
                 double sum = 0;
@@ -49,9 +50,9 @@ namespace ConvolutionalNetwork
                 arg.Apply((d) => Exp(d/100)/sum);
             };
 
-        internal override Matrix3D RecalculateDeltas(Matrix3D oldDeltas, Matrix3D outputs)
+        internal override IMatrix3D RecalculateDeltas(IMatrix3D oldDeltas, IMatrix3D outputs)
         {
-            var newDeltas = new Matrix3D(oldDeltas.Depth, oldDeltas.Height, oldDeltas.Width);
+            var newDeltas = Factory.CreateMatrix3D(oldDeltas.Depth, oldDeltas.Height, oldDeltas.Width);
 
             for (int k = 0; k < oldDeltas.Depth; k++)
                 for (int i = 0; i < oldDeltas.Height; i++)
@@ -71,12 +72,12 @@ namespace ConvolutionalNetwork
     internal class _Sigmoid : ActivationFunc
     {
 
-        internal override Action<Matrix3D> Run =>
+        internal override Action<IMatrix3D> Run =>
             (arg) => arg.Apply((d) => 1 / (1 + Exp(-d)));
 
-        internal override Matrix3D RecalculateDeltas(Matrix3D oldDeltas, Matrix3D outputs)
+        internal override IMatrix3D RecalculateDeltas(IMatrix3D oldDeltas, IMatrix3D outputs)
         {
-            var newDeltas = new Matrix3D(oldDeltas.Depth, oldDeltas.Height, oldDeltas.Width);
+            var newDeltas = Factory.CreateMatrix3D(oldDeltas.Depth, oldDeltas.Height, oldDeltas.Width);
 
             for (int k = 0; k < oldDeltas.Depth; k++)
                 for (int i = 0; i < oldDeltas.Height; i++)
