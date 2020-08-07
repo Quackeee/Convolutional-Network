@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,14 +19,15 @@ namespace ConvolutionalNetwork
 
         internal override void PropagateDeltas(Matrix3D previousDeltas)
         {
-            //Console.WriteLine("Calculating deltas in MaxPoolLayer");
             Deltas = previousDeltas;
-
 
             if (_inputLayer is HiddenLayer)
             {
+                var sw = Stopwatch.StartNew();
+
                 var deltas = new Matrix3D(_input.Dimensions);
-                deltas.ZeroInit();
+
+
                 for (int k = 0; k < OutputDepth; k++)
                 {
                     for (int i = 0; i < OutputHeight; i++)
@@ -46,25 +48,30 @@ namespace ConvolutionalNetwork
                         }
                     }
                 }
-                //Console.WriteLine(deltas);
+                Debug.WriteLine($"Delta Propagation Time Max Pool: {sw.ElapsedMilliseconds}");
 
                 (_inputLayer as HiddenLayer).PropagateDeltas(deltas);
             }
 
         }
 
+
         internal override void CalculateOutput()
         {
             var output = new Matrix[_input.Depth];
+            var calculations = new Task[_input.Depth];
 
             for (int i = 0; i < _input.Depth; i++)
             {
-                output[i] = MaxPool(_input[i], _stride);
+                int k = i;
+                calculations[k] = Task.Run(() => output[k] = MaxPool(_input[k], _stride));
             }
 
-            _output = new Matrix3D(output);
-        }
+            Task.WhenAll(calculations).Wait();
 
+            _output = new Matrix3D(output);
+
+        }
         internal override void ConnectToInput(NetworkLayer inputLayer)
         {
             _inputLayer = inputLayer;
@@ -72,8 +79,6 @@ namespace ConvolutionalNetwork
             OutputDepth = _inputLayer.OutputDepth;
             OutputHeight = _inputLayer.OutputHeight / _stride;
             OutputWidth = _inputLayer.OutputWidth / _stride;
-
-            //Console.WriteLine($"{OutputDepth}x{OutputHeight}x{OutputWidth}");
         }
     }
 }

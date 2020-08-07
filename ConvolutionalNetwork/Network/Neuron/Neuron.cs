@@ -19,7 +19,7 @@ namespace ConvolutionalNetwork
         internal abstract void ConnectToInput(NetworkLayer inputLayer);
         internal void UpdateWeights(Matrix3D diffs, double biasDiff)
         {
-            Weights += diffs;
+            Weights.Add(diffs);
             _bias += biasDiff;
         }
         internal void StreamWeights(StreamWriter sw)

@@ -90,6 +90,17 @@ namespace ConvolutionalNetwork
             return sum;
         }
 
+        public void Sum(Matrix other)
+        {
+            for (int i = 0; i < Height; i++)
+            {
+                for (int j = 0; j < Width; j++)
+                {
+                    this[i, j] = other[i, j];
+                }
+            }
+        }
+
         public override string ToString()
         {
             string s = string.Empty;
@@ -129,7 +140,11 @@ namespace ConvolutionalNetwork
         }
         public Matrix this[int k]
         {
-            get => _matrices[k];
+            get
+            {
+                if (k >= Depth) throw new IndexOutOfRangeException($"Depth was {Depth} recieved {k}");
+                return _matrices[k];
+            }
         }
 
         public Matrix3D(int depth, int height, int width)

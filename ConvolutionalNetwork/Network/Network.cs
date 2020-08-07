@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -50,10 +51,14 @@ namespace ConvolutionalNetwork
         {
             var deltas = new Matrix3D(expectedOutput.Dimensions);
 
+            var sw = Stopwatch.StartNew();
+
             for (int k = 0; k < Output.Depth; k++)
                 for (int i = 0; i < Output.Height; i++)
                     for (int j = 0; j < Output.Width; j++)
                         deltas[k, i, j] = -expectedOutput[k, i, j] / Output[k, i, j];
+
+            Debug.WriteLine($"Delta calculation time {sw.ElapsedMilliseconds}");
 
             _layers.Last().PropagateDeltas(deltas);
 
@@ -75,13 +80,25 @@ namespace ConvolutionalNetwork
 
                     Console.WriteLine(i);
                     var pair = TrainingSet.GetPairAt(j + k*cathegorySize);
+
+                    var stopwatch = Stopwatch.StartNew();
+
+
                     FeedForward(pair.Item1);
                     Console.WriteLine("output:");
                     Console.WriteLine(Output);
                     Console.WriteLine("expected:");
                     Console.WriteLine(pair.Item2);
+
+
+                    Console.WriteLine($"ForwardFeed time: {stopwatch.ElapsedMilliseconds}");
+
+                    stopwatch.Restart();
                     BackPropagate(pair.Item2);
                     Console.Clear();
+
+                    Console.WriteLine($"Last backpropagation time: {stopwatch.ElapsedMilliseconds}");
+
                     k++;
                     if (k == Output.Height) { k = 0; j++; }
                     if (j == cathegorySize) j = 0;
@@ -101,6 +118,7 @@ namespace ConvolutionalNetwork
                     var pair = TrainingSet.GetPairAt(i);
 
                     FeedForward(pair.Item1);
+                    Console.Clear();
                     Console.WriteLine(Output);
                     Console.WriteLine("expected:");
                     Console.WriteLine(pair.Item2);

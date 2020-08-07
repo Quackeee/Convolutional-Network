@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,6 @@ namespace ConvolutionalNetwork
     public class FullConLayer : HiddenLayer, ITrainableLayer
     {
         Neuron[] _neurons;
-        private ActivationFunc _activation;
 
         public FullConLayer(int outputCount, ActivationFunc activation)
         {
@@ -27,48 +27,74 @@ namespace ConvolutionalNetwork
                 _neurons[i] = new Neuron();
             }
 
-            //Console.WriteLine($"{OutputDepth}x{OutputHeight}x{OutputWidth}");
         }
 
         internal override void PropagateDeltas(Matrix3D previousDeltas)
         {
-            //Console.WriteLine("Calculating deltas in FullConLayer");
+
+            var sw = Stopwatch.StartNew();
             Deltas = _activation.RecalculateDeltas(previousDeltas, _output);
+            Debug.WriteLine($"Delta Recalculation Time: {sw.ElapsedMilliseconds}");
+
+            sw.Restart();
 
             if (_inputLayer is HiddenLayer)
             {
+                
 
                 var deltas = new Matrix3D(InputDepth, InputHeight, InputWidth);
+                var calculations = new List<Task>(InputDepth);
 
                 for (int k = 0; k < InputDepth; k++)
                 {
-                    for (int i = 0; i < InputHeight; i++)
+                    int k2 = k;
+
+                    calculations.Add(Task.Run(() =>
                     {
-                        for (int j = 0; j < InputWidth; j++)
+                        for (int i = 0; i < InputHeight; i++)
                         {
-                            deltas[k, i, j] = 0;
-                            for (int n = 0; n < OutputHeight; n++)
+                            for (int j = 0; j < InputWidth; j++)
                             {
-                                deltas[k, i, j] += Deltas[0, n, 0] * _neurons[n].Weights[k, i, j];
+                                for (int n = 0; n < OutputHeight; n++)
+                                {
+                                    deltas[k2, i, j] += Deltas[0, n, 0] * _neurons[n].Weights[k2, i, j];
+                                }
                             }
                         }
                     }
+                    ));
                 }
 
-                //Console.WriteLine(deltas);
+                Task.WhenAll(calculations).Wait();
+
+                Debug.WriteLine($"Delta Propagation Time: {sw.ElapsedMilliseconds}");
+
                 (_inputLayer as HiddenLayer).PropagateDeltas(deltas);
             }
         }
 
+
         internal override void CalculateOutput()
         {
+            var calculations = new Task[OutputHeight];
+
             for (int i = 0; i < OutputHeight; i++)
             {
-                _neurons[i].CalculateOutput();
-                _output[0, i, 0] = _neurons[i].Output;
+                int k = i;
+
+                calculations[k] =
+                    Task.Run(
+                        () => {
+                            _neurons[k].CalculateOutput();
+                            _output[0, k, 0] = _neurons[k].Output;
+                        }
+                );
             }
+
+            Task.WaitAll(calculations);
             _activation.Run(_output);
         }
+
 
         internal override void ConnectToInput(NetworkLayer inputLayer)
         {
@@ -80,27 +106,36 @@ namespace ConvolutionalNetwork
 
         public void UpdateWeights()
         {
-            //Console.WriteLine("updating weights in FullConLayer");
+            var diffs = new Matrix3D[_neurons.Length];
+            var sw = Stopwatch.StartNew();
 
-            var diffs = new Matrix3D(_input.Dimensions);
-            //Console.WriteLine("deltas:");
-            //Console.WriteLine(Deltas);
+            var calculations = new Task[_neurons.Length];
+
             for (int n = 0; n < _neurons.Length; n++)
             {
-                diffs.ZeroInit();
+                int n2 = n;
 
-                for (int k = 0; k < InputDepth; k++)
-                    for (int i = 0; i < InputHeight; i++)
-                        for (int j = 0; j < InputWidth; j++)
-                            diffs[k, i, j] += Deltas[0, n, 0] * _input[k, i, j];
+                calculations[n2] = Task.Run(
+                    () =>
+                    {
+                        diffs[n2] = new Matrix3D(_input.Dimensions);
 
-                diffs.Apply((d) => -0.03 * d);
-                double biasDiff = - 0.03 * Deltas[0, n, 0];
+                        for (int k = 0; k < InputDepth; k++)
+                            for (int i = 0; i < InputHeight; i++)
+                                for (int j = 0; j < InputWidth; j++)
+                                    diffs[n2][k, i, j] += Deltas[0, n2, 0] * _input[k, i, j];
 
-                _neurons[n].UpdateWeights(diffs,biasDiff);
-                
+                        diffs[n2].Apply((d) => -0.03 * d);
+                        double biasDiff = -0.03 * Deltas[0, n2, 0];
+
+                        _neurons[n2].UpdateWeights(diffs[n2], biasDiff);
+                    }
+                );
             }
-            //Console.WriteLine(_neurons[1].Weights);
+
+            Task.WaitAll(calculations);
+
+            Debug.WriteLine($"Weight Update Time: {sw.ElapsedMilliseconds}");
         }
 
         public void StreamWeights(StreamWriter sw)

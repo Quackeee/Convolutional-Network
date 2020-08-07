@@ -111,7 +111,6 @@ namespace ConvolutionalNetwork
         public static Matrix ConvolveWhole(Matrix3D matrix, Matrix3D kernel)
         {
             var convolution = new Matrix(matrix[0].Height - kernel[0].Height + 1, matrix[0].Width - kernel[0].Width + 1);
-            convolution.ZeroInit();
 
             for (int k = 0; k < matrix.Depth; k++)
             {
@@ -123,7 +122,7 @@ namespace ConvolutionalNetwork
                     }
                 }
             }
-
+            
             //Console.WriteLine($"{convolution.Height}x{convolution.Width}");
 
             return convolution;
@@ -176,6 +175,15 @@ namespace ConvolutionalNetwork
 
             return output;
         }
+
+        public static Matrix3D CreateVersor(int dimensions, int direction)
+        {
+            if (direction >= dimensions || direction < 0) throw new ArgumentOutOfRangeException("direction", "direction must be at least 0 and lower than dimensions");
+            var versor = new Matrix3D(1, dimensions, 1);
+            versor[0, direction, 0] = 1;
+            return versor;
+        }
+
 
     }
 }

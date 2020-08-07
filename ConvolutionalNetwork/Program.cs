@@ -14,7 +14,7 @@ namespace ConvolutionalNetwork
     {
         static void Main()
         {
-            #region definicje
+            /* #region definicje
 
             Stopwatch sw = new Stopwatch();
 
@@ -119,11 +119,32 @@ namespace ConvolutionalNetwork
              *  |7, 5, 12, 8, 7, |
              *  |6, -1, 5, 7, 5, |
              *  
-             */
+             
 
             ActivationFuncs.SoftMax.Run(output);
 
             Console.WriteLine(output);
+
+            Console.ReadKey(); */
+
+            Network network = new Network
+            (
+                new InputLayer(128, 96, false),
+                new ConvLayer(6),
+                new MaxPoolLayer(2),
+                new ConvLayer(16),
+                new MaxPoolLayer(2),
+                new ConvLayer(120),
+                new FullConLayer(84, ActivationFuncs.Sigmoid),
+                new FullConLayer(9, ActivationFuncs.SoftMax)
+            );
+
+            network.TrainingSet = new LearningSet(@"D:\Users\Krzysiu\Documents\Studia\Programowanie\AI\ConvolutionalNetwork\ConvolutionalNetwork\LearningSet", false);
+            network.TestSet = new LearningSet(@"D:\Users\Krzysiu\Documents\Studia\Programowanie\AI\ConvolutionalNetwork\ConvolutionalNetwork\TestSet", false);
+
+
+            network.Load(@"D:\Users\Krzysiu\Documents\Studia\Programowanie\AI\ConvolutionalNetwork\ConvolutionalNetwork\bin\Debug\backup.cnet");
+            network.Train(100000);
 
             Console.ReadKey();
         }

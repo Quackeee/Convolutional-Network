@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,12 @@ namespace ConvolutionalNetwork
 {
     class LearningSet
     {
+        private int _pictureHeight;
+        private int _pictureWidth;
+        private bool _rgb;
+        private int _cathegoryCount;
+
+
         private List<Tuple<Matrix3D, Matrix3D>> _pictureValuePairs = new List<Tuple<Matrix3D, Matrix3D>>();
 
         public int Size { get => _pictureValuePairs.Count; }
@@ -18,49 +25,8 @@ namespace ConvolutionalNetwork
 
         public LearningSet(string path, bool rgb = true)
         {
-            var fileInfo = new FileInfo(path);
-            if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
-            {
-                var dir = new DirectoryInfo(fileInfo.FullName);
-                var dirs = dir.GetDirectories();
-
-                var outputs = new Matrix3D[dirs.Length];
-
-                for (int i = 0; i < dirs.Length; i++)
-                {
-                    outputs[i] = new Matrix3D(1, dirs.Length, 1);
-                    outputs[i].ZeroInit();
-                    outputs[i][0, i, 0] = 1;
-
-                }
-
-                var exampleFile = new Bitmap(dirs[0].GetFiles()[0].FullName);
-                int width = exampleFile.Width;
-                int height = exampleFile.Height;
-
-                for (int i = 0; i < dirs.Length; i++)
-                {
-                    foreach (var file in dirs[i].GetFiles())
-                    {
-                        var picture = new Bitmap(file.FullName);
-                        //Console.WriteLine(file.FullName + "\n" +outputs[i]);
-
-                        if (width != picture.Width || height != picture.Height)
-                            throw new InvalidOperationException($"Picture at {file.FullName} is not of proper size " +
-                                                                $"should be {width}x{height}, " +
-                                                                $"recieved {picture.Width}x{picture.Height}");
-
-
-                        _pictureValuePairs.Add
-                            (
-                            rgb ?
-                            new Tuple<Matrix3D, Matrix3D>(picture.AsMatrixRGB(), outputs[i]) :
-                            new Tuple<Matrix3D, Matrix3D>(picture.AsMatrixGrayscale(), outputs[i])
-                            );
-                    }
-                }
-            }
-            else throw new NotImplementedException("Other methods for creating a learning set are not yet implemented");
+            _rgb = rgb;
+            LoadSet(path);
         }
 
         public Tuple<Matrix3D,Matrix3D> GetPairAt(int index)
@@ -72,5 +38,76 @@ namespace ConvolutionalNetwork
         {
             return _pictureValuePairs[Rand.Next(_pictureValuePairs.Count)];
         }
+
+        private void LoadSet(string path)
+        {
+            var fileInfo = new FileInfo(path);
+            if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+            {
+                var dir = new DirectoryInfo(fileInfo.FullName);
+                var dirs = dir.GetDirectories();
+
+                _cathegoryCount = dirs.Length;
+
+                var exampleFile = new Bitmap(dirs[0].GetFiles()[0].FullName);
+
+                _pictureWidth = exampleFile.Width;
+                _pictureHeight = exampleFile.Height;
+
+
+                var stopwatch = Stopwatch.StartNew();
+
+                var fileLoadings = new List<Task>();
+
+                for (int i = 0; i < dirs.Length; i++)
+                {
+                    fileLoadings.Add(FillPictureValuePairsAsync(dirs[i], i));
+                }
+                Debug.WriteLine($"Loading Finished: {stopwatch.ElapsedMilliseconds}");
+
+                Task.WhenAll(fileLoadings).Wait();
+
+            }
+            else throw new NotImplementedException("Other methods for creating a learning set are not yet implemented");
+        }
+
+        private Matrix3D FileToMatrix3D(FileInfo file)
+        {
+            var picture = new Bitmap(file.FullName);
+
+            if (_pictureWidth != picture.Width || _pictureHeight != picture.Height)
+                throw new InvalidOperationException($"Picture at {file.FullName} is not of proper size " +
+                                                    $"should be {_pictureWidth}x{_pictureHeight}, " +
+                                                    $"recieved {picture.Width}x{picture.Height}");
+
+
+             return _rgb ? picture.AsMatrixRGB() : picture.AsMatrixGrayscale();
+        }
+
+        private async Task FillPictureValuePairsAsync(DirectoryInfo dir, int index)
+        {
+            var outputVector = CreateVersor(_cathegoryCount, index);
+            var fileLoadings = new List<Task>();
+
+            foreach (var file in dir.GetFiles())
+            {
+                fileLoadings.Add(
+                    Task.Run(() =>
+                   {
+                       _pictureValuePairs.Add
+                           (
+                           Tuple.Create
+                               (
+                               FileToMatrix3D(file),
+                               outputVector
+                               )
+                           );
+                   }
+                ));
+            }
+            await Task.WhenAll(fileLoadings);
+        }
+
+
     }
 }
