@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -188,10 +189,24 @@ namespace ConvolutionalNetwork
         }
         public void Apply(Func<double,double> func)
         {
+            //var sw = Stopwatch.StartNew();
+
+            /*
+            Parallel.For(0, Depth, k =>
+                {
+                    for (int i = 0; i < Height; i++)
+                        for (int j = 0; j < Width; j++)
+                            this[k, i, j] = func(this[k, i, j]);
+                }
+            );
+            */
+
             for (int k = 0; k < Depth; k++)
                 for (int i = 0; i < Height; i++)
                     for (int j = 0; j < Width; j++)
                         this[k, i, j] = func(this[k, i, j]);
+            
+            //Debug.WriteLine($"Apply time: {sw.ElapsedMilliseconds}");
         }
 
         public static Matrix3D operator +(Matrix3D m1, Matrix3D m2)

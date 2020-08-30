@@ -23,7 +23,7 @@ namespace ConvolutionalNetwork
 
             if (_inputLayer is HiddenLayer)
             {
-                var sw = Stopwatch.StartNew();
+                //var sw = Stopwatch.StartNew();
 
                 var deltas = new Matrix3D(_input.Dimensions);
 
@@ -48,7 +48,7 @@ namespace ConvolutionalNetwork
                         }
                     }
                 }
-                Debug.WriteLine($"Delta Propagation Time Max Pool: {sw.ElapsedMilliseconds}");
+                //Debug.WriteLine($"Delta Propagation Time Max Pool: {sw.ElapsedMilliseconds}");
 
                 (_inputLayer as HiddenLayer).PropagateDeltas(deltas);
             }

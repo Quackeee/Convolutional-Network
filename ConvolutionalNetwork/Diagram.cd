@@ -6,9 +6,10 @@
       <Method Name="LearningSet" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAQAAgQAAAAA=</HashCode>
+      <HashCode>AAAAAAAIAAAAgBSAgAAAAAAAQAAAAEAEAQAAqAAQEAA=</HashCode>
       <FileName>LearningSet.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="ConvolutionalNetwork.Network">
     <Position X="16.75" Y="8" Width="1.5" />
@@ -105,7 +106,7 @@
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>AEAAAAgAAAAAAAgAAgAACAAABAAAAAAAACAAAAAQAAA=</HashCode>
+      <HashCode>AEAAAAgAAAAAAAAAAgAACAAABAAAAAAAACAAAAAQAAA=</HashCode>
       <FileName>Network\Layer\FullConLayer.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -113,7 +114,7 @@
   <Class Name="ConvolutionalNetwork.ConvLayer" Collapsed="true">
     <Position X="11.25" Y="9" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AEQAAAgAAAAAAAgAAgAACAAAFAAAAQAAACAAAAAQAAA=</HashCode>
+      <HashCode>AEQAAAgAAAAAAAAAAgAACAAAFAAAAQAAACAAAAAQAAA=</HashCode>
       <FileName>Network\Layer\ConvLayer.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />

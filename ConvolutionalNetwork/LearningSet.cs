@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -10,33 +11,39 @@ using static ConvolutionalNetwork.Utils;
 
 namespace ConvolutionalNetwork
 {
-    class LearningSet
+    public enum ReadingOrder
+    {
+        Sequential,
+        Random
+    }
+
+    class LearningSet : IEnumerable<Tuple<Matrix3D, Matrix3D>>
     {
         private int _pictureHeight;
         private int _pictureWidth;
         private bool _rgb;
-        private int _cathegoryCount;
+        public ReadingOrder ReadingOrder = ReadingOrder.Sequential;
 
+        public int CathegoryCount { get; private set; }
+        public int CathegorySize { get; private set; }
+        public int Size { get; private set; }
 
-        private List<Tuple<Matrix3D, Matrix3D>> _pictureValuePairs = new List<Tuple<Matrix3D, Matrix3D>>();
-
-        public int Size { get => _pictureValuePairs.Count; }
-
-
+        private List<Tuple<Matrix3D, Matrix3D>>[] _cathegories;
+        
         public LearningSet(string path, bool rgb = true)
         {
             _rgb = rgb;
             LoadSet(path);
         }
 
-        public Tuple<Matrix3D,Matrix3D> GetPairAt(int index)
+        public Tuple<Matrix3D,Matrix3D> GetPairAt(int cathegory, int index)
         {
-            return _pictureValuePairs[index];
+            return _cathegories[cathegory][index];
         }
 
         public Tuple<Matrix3D, Matrix3D> GetRandomPair()
         {
-            return _pictureValuePairs[Rand.Next(_pictureValuePairs.Count)];
+            return _cathegories[Rand.Next(CathegoryCount)][Rand.Next(CathegorySize)];
         }
 
         private void LoadSet(string path)
@@ -47,15 +54,17 @@ namespace ConvolutionalNetwork
                 var dir = new DirectoryInfo(fileInfo.FullName);
                 var dirs = dir.GetDirectories();
 
-                _cathegoryCount = dirs.Length;
+                CathegoryCount = dirs.Length;
+                CathegorySize = dirs[0].GetFiles().Length;
 
                 var exampleFile = new Bitmap(dirs[0].GetFiles()[0].FullName);
 
                 _pictureWidth = exampleFile.Width;
                 _pictureHeight = exampleFile.Height;
 
+                _cathegories = new List<Tuple<Matrix3D, Matrix3D>>[CathegoryCount];
 
-                var stopwatch = Stopwatch.StartNew();
+                //var stopwatch = Stopwatch.StartNew();
 
                 var fileLoadings = new List<Task>();
 
@@ -63,12 +72,12 @@ namespace ConvolutionalNetwork
                 {
                     fileLoadings.Add(FillPictureValuePairsAsync(dirs[i], i));
                 }
-                Debug.WriteLine($"Loading Finished: {stopwatch.ElapsedMilliseconds}");
+                //Debug.WriteLine($"Loading Finished: {stopwatch.ElapsedMilliseconds}");
 
                 Task.WhenAll(fileLoadings).Wait();
 
             }
-            else throw new NotImplementedException("Other methods for creating a learning set are not yet implemented");
+            else throw new ArgumentException("Please provide a valid path to a directory");
         }
 
         private Matrix3D FileToMatrix3D(FileInfo file)
@@ -86,15 +95,20 @@ namespace ConvolutionalNetwork
 
         private async Task FillPictureValuePairsAsync(DirectoryInfo dir, int index)
         {
-            var outputVector = CreateVersor(_cathegoryCount, index);
+            var outputVector = CreateVersor(CathegoryCount, index);
             var fileLoadings = new List<Task>();
+
+            _cathegories[index] = new List<Tuple<Matrix3D, Matrix3D>>();
+
+
+            Size += dir.GetFiles().Length;
 
             foreach (var file in dir.GetFiles())
             {
                 fileLoadings.Add(
                     Task.Run(() =>
                    {
-                       _pictureValuePairs.Add
+                       _cathegories[index].Add
                            (
                            Tuple.Create
                                (
@@ -108,6 +122,44 @@ namespace ConvolutionalNetwork
             await Task.WhenAll(fileLoadings);
         }
 
+        public IEnumerator<Tuple<Matrix3D, Matrix3D>> GetEnumerator()
+        {
+            if (ReadingOrder == ReadingOrder.Sequential)
+            {
+                int currentCathegory = 0;
+                int currentElement = 0;
 
+                while (true)
+                {
+                    //Console.WriteLine($"{currentCathegory}, {currentElement}");
+                    yield return GetPairAt(currentCathegory, currentElement);
+
+                    if (currentCathegory == CathegoryCount - 1)
+                    {
+                        if (currentElement == CathegorySize - 1)
+                        {
+                            yield break;
+                        }
+                        else
+                        {
+                            currentCathegory = 0;
+                            currentElement++;
+                        }
+                    }
+                    else currentCathegory++;
+                }
+            }
+            else
+            {
+                while (true)
+                {
+                    foreach (var cathegory in _cathegories)
+                        foreach (var pair in cathegory) yield return pair;
+                    yield break;
+                }
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

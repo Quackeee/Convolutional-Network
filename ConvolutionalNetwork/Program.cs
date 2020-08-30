@@ -143,8 +143,9 @@ namespace ConvolutionalNetwork
             network.TestSet = new LearningSet(@"D:\Users\Krzysiu\Documents\Studia\Programowanie\AI\ConvolutionalNetwork\ConvolutionalNetwork\TestSet", false);
 
 
-            network.Load(@"D:\Users\Krzysiu\Documents\Studia\Programowanie\AI\ConvolutionalNetwork\ConvolutionalNetwork\bin\Debug\backup.cnet");
-            network.Train(100000);
+            //network.Load(@"D:\Users\Krzysiu\Documents\Studia\Programowanie\AI\ConvolutionalNetwork\ConvolutionalNetwork\bin\Debug\backup.cnet");
+            network.Train(50);
+            network.Test();
 
             Console.ReadKey();
         }

@@ -51,14 +51,14 @@ namespace ConvolutionalNetwork
         {
             var deltas = new Matrix3D(expectedOutput.Dimensions);
 
-            var sw = Stopwatch.StartNew();
+            //var sw = Stopwatch.StartNew();
 
             for (int k = 0; k < Output.Depth; k++)
                 for (int i = 0; i < Output.Height; i++)
                     for (int j = 0; j < Output.Width; j++)
                         deltas[k, i, j] = -expectedOutput[k, i, j] / Output[k, i, j];
 
-            Debug.WriteLine($"Delta calculation time {sw.ElapsedMilliseconds}");
+            //Debug.WriteLine($"Delta calculation time {sw.ElapsedMilliseconds}");
 
             _layers.Last().PropagateDeltas(deltas);
 
@@ -68,74 +68,106 @@ namespace ConvolutionalNetwork
 
         public void Train(int epochs)
         {
+            //var sw = new Stopwatch();
+            double? testOutput = null;
+            double? previousTestOutput;
+
+            double sumOfCosts = 0;
+
             if (TrainingSet != null)
             {
-                int cathegorySize = TrainingSet.Size / Output.Height;
-                int k = 0;
-                int j = 0;
-
                 for (int i = 0; i < epochs; i++)
                 {
-                    if (i%100 == 0) Save(@".\backup.cnet");
+                    Console.WriteLine($"Training epoch {i + 1}/{epochs}");
+                    int j = 0;
 
-                    Console.WriteLine(i);
-                    var pair = TrainingSet.GetPairAt(j + k*cathegorySize);
+                    foreach (var pair in TrainingSet)
+                    {
+                        Console.Write($"\r{j}/{TrainingSet.Size}");
 
-                    var stopwatch = Stopwatch.StartNew();
+                        //sw.Restart();
+
+                        FeedForward(pair.Item1);
+                        //Console.WriteLine("output:");
+                        //Console.WriteLine(Output);
+                        //Console.WriteLine("expected:");
+                        //Console.WriteLine(pair.Item2);
+
+                        sumOfCosts = Utils.Cost(Output, pair.Item2);
+
+                        //Console.WriteLine($"ForwardFeed time: {sw.ElapsedMilliseconds}");
+
+                        //sw.Restart();
+                        BackPropagate(pair.Item2);
+
+                        //Console.Clear();
+                        //Console.WriteLine($"Last backpropagation time: {sw.ElapsedMilliseconds}");
+
+                        j++;
+                    }
+
+                    Console.WriteLine($"\r{j}/{TrainingSet.Size}");
+                    Console.WriteLine($"Average cost: {sumOfCosts / TrainingSet.Size}");
 
 
-                    FeedForward(pair.Item1);
-                    Console.WriteLine("output:");
-                    Console.WriteLine(Output);
-                    Console.WriteLine("expected:");
-                    Console.WriteLine(pair.Item2);
+                    previousTestOutput = testOutput ?? double.PositiveInfinity;
+                    Test(error => testOutput = error);
+                    Console.WriteLine($"Cost difference (should be positive): {previousTestOutput - testOutput}");
 
-
-                    Console.WriteLine($"ForwardFeed time: {stopwatch.ElapsedMilliseconds}");
-
-                    stopwatch.Restart();
-                    BackPropagate(pair.Item2);
-                    Console.Clear();
-
-                    Console.WriteLine($"Last backpropagation time: {stopwatch.ElapsedMilliseconds}");
-
-                    k++;
-                    if (k == Output.Height) { k = 0; j++; }
-                    if (j == cathegorySize) j = 0;
+                    Save(@"D:\Users\Krzysiu\Documents\Studia\Programowanie\AI\ConvolutionalNetwork\ConvolutionalNetwork\bin\Debug\backup.cnet");
                 }
             }
             else throw new InvalidOperationException("There was no training set included for this network");
         }
 
-        public void Test()
+        public void Test(Action<double> listener = null)
         {
             if (TestSet != null)
             {
-                int goodGuesses = 0;
+                TestSet.ReadingOrder = ReadingOrder.Random;
 
-                for (int i = 0; i < TestSet.Size; i++)
+                int goodGuesses = 0;
+                int i = 0;
+                double sumOfCosts = 0;
+
+                Console.WriteLine("Running tests...");
+
+                foreach (var pair in TestSet)
                 {
-                    var pair = TrainingSet.GetPairAt(i);
+                    Console.Write($"\r{i}/{TestSet.Size}");
 
                     FeedForward(pair.Item1);
-                    Console.Clear();
-                    Console.WriteLine(Output);
-                    Console.WriteLine("expected:");
-                    Console.WriteLine(pair.Item2);
+                    //Console.Clear();
+                    //Console.WriteLine(Output);
+                    //Console.WriteLine("expected:");
+                    //Console.WriteLine(pair.Item2);
 
                     int maxIndex = 0;
                     for (int n = 0; n < Output.Height; n++)
                     {
                         if (Output[0, n, 0] > Output[0, maxIndex, 0]) maxIndex = n;
                     }
-                    string goodOrBad = pair.Item2[0, maxIndex, 0] == 1 ? "good" : "bad";
+                    //string goodOrBad = pair.Item2[0, maxIndex, 0] == 1 ? "good" : "bad";
                     if (pair.Item2[0, maxIndex, 0] == 1) goodGuesses += 1;
 
-                    Console.Write($"item nr {i} belongs to class {maxIndex} with {(int)(Output[0, maxIndex, 0] * 100)}% certainty.\n" +
-                        $"that's a {goodOrBad} guess");
+                    //Console.Write($"item nr {i} belongs to class {maxIndex} with {(int)(Output[0, maxIndex, 0] * 100)}% certainty.\n" +
+                    //    $"that's a {goodOrBad} guess");
+
+                    sumOfCosts += Utils.Cost(Output, pair.Item2);
+
+                    i++;
                 }
 
-                Console.WriteLine($"We got {(double) goodGuesses / TestSet.Size}% accuracy!");
+                Console.WriteLine($"\r{TestSet.Size}/{TestSet.Size}");
+
+                double accuracy = (double)goodGuesses / TestSet.Size;
+                double averageCost = sumOfCosts / TestSet.Size;
+
+                listener?.Invoke(averageCost);
+
+                Console.WriteLine($"We got {accuracy * 100}% accuracy and average cost of {averageCost}!");
+
+                //Console.ReadKey();
             }
             else throw new InvalidOperationException("There was no test set included for this network");
         }

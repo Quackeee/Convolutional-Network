@@ -49,21 +49,13 @@ namespace ConvolutionalNetwork
             if (IsConnected)
             {
                 var output = new Matrix[OutputDepth];
-                var calculations = new Task[OutputDepth];
 
-                for (int i = 0; i < OutputDepth; i++)
-                {
-                    int k = i;
+                Parallel.For(0, OutputDepth, i =>
+                  {
+                      _neurons[i].CalculateOutput();
+                      output[i] = _neurons[i].Output;
+                  });
 
-                    calculations[k] = Task.Run(() =>
-                    {
-                        _neurons[k].CalculateOutput();
-                        output[k] = _neurons[k].Output;
-                    }
-                    );
-                }
-
-                Task.WaitAll(calculations);
 
                 _output = new Matrix3D(output);
                 _activation.Run(_output);
@@ -73,10 +65,10 @@ namespace ConvolutionalNetwork
 
         internal override void PropagateDeltas(Matrix3D previousDeltas)
         {
-            var sw = Stopwatch.StartNew();
+            //var sw = Stopwatch.StartNew();
             Deltas = _activation.RecalculateDeltas(previousDeltas,Output);
-            Debug.WriteLine($"Delta Recalculation Time: {sw.ElapsedMilliseconds}");
-            sw.Restart();
+            //Debug.WriteLine($"Delta Recalculation Time: {sw.ElapsedMilliseconds}");
+            //sw.Restart();
 
             if (_inputLayer is HiddenLayer)
             {
@@ -112,7 +104,7 @@ namespace ConvolutionalNetwork
 
                 Task.WhenAll(calculations).Wait();
 
-                Debug.WriteLine($"Delta Propagation Time: {sw.ElapsedMilliseconds}");
+                //Debug.WriteLine($"Delta Propagation Time: {sw.ElapsedMilliseconds}");
                 (_inputLayer as HiddenLayer).PropagateDeltas(deltas);
             }
         }
@@ -147,7 +139,7 @@ namespace ConvolutionalNetwork
         }
         public void UpdateWeights()
         {
-            var sw = Stopwatch.StartNew();
+            //var sw = Stopwatch.StartNew();
 
             var diffs = new Matrix3D[OutputDepth];
             var calculations = new Task[OutputDepth];
@@ -190,7 +182,7 @@ namespace ConvolutionalNetwork
                 );
             }
 
-            Debug.WriteLine($"Weights Update time: {sw.ElapsedMilliseconds}");
+            //Debug.WriteLine($"Weights Update time: {sw.ElapsedMilliseconds}");
         }
 
         public void StreamWeights(StreamWriter sw)

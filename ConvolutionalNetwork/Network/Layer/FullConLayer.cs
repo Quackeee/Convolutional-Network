@@ -32,42 +32,31 @@ namespace ConvolutionalNetwork
         internal override void PropagateDeltas(Matrix3D previousDeltas)
         {
 
-            var sw = Stopwatch.StartNew();
+            //var sw = Stopwatch.StartNew();
             Deltas = _activation.RecalculateDeltas(previousDeltas, _output);
-            Debug.WriteLine($"Delta Recalculation Time: {sw.ElapsedMilliseconds}");
+            //Debug.WriteLine($"Delta Recalculation Time: {sw.ElapsedMilliseconds}");
 
-            sw.Restart();
+            //sw.Restart();
 
             if (_inputLayer is HiddenLayer)
             {
-                
-
                 var deltas = new Matrix3D(InputDepth, InputHeight, InputWidth);
-                var calculations = new List<Task>(InputDepth);
 
-                for (int k = 0; k < InputDepth; k++)
-                {
-                    int k2 = k;
+                Parallel.For(0, InputDepth, k =>
+                  {
+                      for (int i = 0; i < InputHeight; i++)
+                      {
+                          for (int j = 0; j < InputWidth; j++)
+                          {
+                              for (int n = 0; n < OutputHeight; n++)
+                              {
+                                  deltas[k, i, j] += Deltas[0, n, 0] * _neurons[n].Weights[k, i, j];
+                              }
+                          }
+                      }
+                  });
 
-                    calculations.Add(Task.Run(() =>
-                    {
-                        for (int i = 0; i < InputHeight; i++)
-                        {
-                            for (int j = 0; j < InputWidth; j++)
-                            {
-                                for (int n = 0; n < OutputHeight; n++)
-                                {
-                                    deltas[k2, i, j] += Deltas[0, n, 0] * _neurons[n].Weights[k2, i, j];
-                                }
-                            }
-                        }
-                    }
-                    ));
-                }
-
-                Task.WhenAll(calculations).Wait();
-
-                Debug.WriteLine($"Delta Propagation Time: {sw.ElapsedMilliseconds}");
+                //Debug.WriteLine($"Delta Propagation Time: {sw.ElapsedMilliseconds}");
 
                 (_inputLayer as HiddenLayer).PropagateDeltas(deltas);
             }
@@ -107,7 +96,7 @@ namespace ConvolutionalNetwork
         public void UpdateWeights()
         {
             var diffs = new Matrix3D[_neurons.Length];
-            var sw = Stopwatch.StartNew();
+            //var sw = Stopwatch.StartNew();
 
             var calculations = new Task[_neurons.Length];
 
@@ -135,7 +124,7 @@ namespace ConvolutionalNetwork
 
             Task.WaitAll(calculations);
 
-            Debug.WriteLine($"Weight Update Time: {sw.ElapsedMilliseconds}");
+            //Debug.WriteLine($"Weight Update Time: {sw.ElapsedMilliseconds}");
         }
 
         public void StreamWeights(StreamWriter sw)
